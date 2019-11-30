@@ -64,8 +64,8 @@ class JarvisPatrick(object):
         res = sorted(res, key=lambda neighbor_tuple: neighbor_tuple[1])
         return [element] + list(map(lambda element: element[0], res))
 
-def main():
-    input_data = read_file('inputs/2_50.in')
+def main(file):
+    input_data = read_file(file)
     num_loc, num_houses, list_loc, list_houses, start, adj_matrix = data_parser(input_data)
     G = adjacency_matrix_to_graph(adj_matrix)[0]
     location_indices = convert_locations_to_indices(list_loc,list_loc)
@@ -104,8 +104,8 @@ def main():
     best_drop_off = {}
     # k is the number of nearest neighbors around a node to consider
     # s is the number of shared neighbors between u and v for them to be put into 1 cluster
-    for k in range(1,int(num_loc/2)):
-        for s in range(2,int(num_loc/5)):
+    for k in range(1,30):
+        for s in range(2,20):
             try:
                 clusters_dict = jp(k, s)
                 cluster_centers = []
@@ -133,8 +133,8 @@ def main():
                             G_prime.add_edge(node_1,node_2, weight=dist)
                 G_prime_nodes = {i : cluster_centers[i] for i in range(len(cluster_centers))}
                 #Ant colony technique
-                solver = acopy.Solver(rho=.03, q=1)
-                colony = acopy.Colony(alpha=1, beta=3)
+                solver = acopy.Solver(rho=.05, q=1)
+                colony = acopy.Colony(alpha=5, beta=10)
                 ant_tour = solver.solve(G_prime, colony, limit=500)
                 ant_tour_nodes = ant_tour.nodes
                 if(ant_tour_nodes.count(start_index)==1):
@@ -150,7 +150,7 @@ def main():
                 # This the other TSP solver
                 tsp = TSP()
                 tsp.read_mat(nx.adjacency_matrix(G_prime).todense())
-                two_opt = TwoOpt_solver(initial_tour='NN', iter_num=10000)
+                two_opt = TwoOpt_solver(initial_tour='NN', iter_num=2000)
                 two_opt_tour = tsp.get_approx_solution(two_opt)
                 best_tour = tsp.get_best_solution()
                 center_tour = [G_prime_nodes[node] for node in best_tour]
@@ -181,4 +181,4 @@ def main():
             except OverflowError:
                 continue
     print(best_cost)
-main()
+main('inputs/2_100.in')
