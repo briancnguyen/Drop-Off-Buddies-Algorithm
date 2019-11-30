@@ -143,15 +143,15 @@ def num_distinct_drop_offs(cycle):
 def homes_at_drop_offs(graph, walking_matrix):
     homes_set = set(graph.list_of_houses)
     TAs, D = [], {}
-    for i in range(len(graph.list_of_locations)):
-        if graph.list_of_locations[i] in homes_set:
-            TAs.append((i, graph.list_of_locations[i]))
-    for index, home in TAs:
-        drop_off_vertex = np.where(walking_matrix[:, index] == 1)[0][0]
+    for node in range(len(graph.list_of_locations)):
+        if graph.list_of_locations[node] in homes_set:
+            TAs.append(node)
+    for node in TAs:
+        drop_off_vertex = np.where(walking_matrix[:, node] == 1)[0][0]
         if drop_off_vertex not in D:
-            D[drop_off_vertex] = [index,]
+            D[drop_off_vertex] = [node,]
         else:
-            D.get(drop_off_vertex).append(index)
+            D.get(drop_off_vertex).append(node)
     return D
 
 # cycle = car_cycle(graph, graph.optimal_A())
