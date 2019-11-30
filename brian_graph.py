@@ -112,3 +112,48 @@ class Graph:
                 W.append(v.x)
         return np.array(W).reshape((self.number_of_locations, self.number_of_locations))
         
+
+# Output format
+"""
+Drop-Off Locations: Soda Dwinelle Campanile Barrows Soda
+Number of Distinct Locations Dropped Off: 3
+Soda Cory
+Dwinelle Wheeler RSF
+Campanile Campanile
+"""
+def car_cycle(graph, arrangement_matrix):
+    def drop_off_compression(cycle):
+        locations = []
+        previous = None
+        for location in cycle:
+            if location != previous:
+                locations.append(location)
+            previous = location
+        return locations
+    drop_offs = []
+    for c in range(arrangement_matrix.shape[1]):
+        drop_off_vertex = np.where(arrangement_matrix[:, c] == 1)[0][0]
+#         location = graph.vertex_to_location[drop_off_vertex]
+        drop_offs.append(drop_off_vertex)
+    return drop_off_compression(drop_offs)
+
+def num_distinct_drop_offs(cycle):
+    return len(set(cycle[1:-1]))
+
+def homes_at_drop_offs(graph, walking_matrix):
+    homes_set = set(graph.list_of_houses)
+    TAs, D = [], {}
+    for i in range(len(graph.list_of_locations)):
+        if graph.list_of_locations[i] in homes_set:
+            TAs.append((i, graph.list_of_locations[i]))
+    for index, home in TAs:
+        drop_off_vertex = np.where(walking_matrix[:, index] == 1)[0][0]
+        if drop_off_vertex not in D:
+            D[drop_off_vertex] = [index,]
+        else:
+            D.get(drop_off_vertex).append(index)
+    return D
+
+# cycle = car_cycle(graph, graph.optimal_A())
+# num = num_distinct_drop_offs(cycle)
+# D = homes_at_drop_offs(graph, graph.optimal_W())
