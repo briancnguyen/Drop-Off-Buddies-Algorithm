@@ -5,6 +5,7 @@ from collections import defaultdict
 from tspy import TSP
 import scipy as sp
 from tspy.solvers import TwoOpt_solver
+import acopy
 
 # Imported JarvisPatrick init.py file b/c there is a bug that i needed to fix
 class JarvisPatrick(object):
@@ -101,21 +102,29 @@ def main():
     best_cost = 10e1000
     best_rao_tour = []
     best_drop_off = {}
+    # k is the number of nearest neighbors around a node to consider
+    # s is the number of shared neighbors between u and v for them to be put into 1 cluster
     for k in range(1,int(num_loc/2)):
         for s in range(2,int(num_loc/5)):
             try:
                 clusters_dict = jp(k, s)
                 cluster_centers = []
                 cluster_center_drop_off = {}
+                # Creates list of cluster_centers, these are where we drop drop_off
+                # also does pruning to remove useless clusters
                 for key in clusters_dict:
                     drop_off = list(set(house_indices) & set(clusters_dict[key]))
                     if start_index in clusters_dict[key]:
                         cluster_centers.append(start_index)
                         cluster_center_drop_off[start_index] = drop_off
                     else:
+                        if(len(drop_off) == 0):
+                            continue
                         center = find_centroid(clusters_dict[key])
                         cluster_centers.append(center)
                         cluster_center_drop_off[center] = drop_off
+
+                #G_prime is the graph of clusters
                 G_prime = nx.Graph()
                 for node_1 in cluster_centers:
                     for node_2 in cluster_centers:
@@ -123,9 +132,25 @@ def main():
                         if(dist != 10e100):
                             G_prime.add_edge(node_1,node_2, weight=dist)
                 G_prime_nodes = {i : cluster_centers[i] for i in range(len(cluster_centers))}
+                #Ant colony technique
+                solver = acopy.Solver(rho=.03, q=1)
+                colony = acopy.Colony(alpha=1, beta=3)
+                ant_tour = solver.solve(G_prime, colony, limit=500)
+                ant_tour_nodes = ant_tour.nodes
+                if(ant_tour_nodes.count(start_index)==1):
+                    ant_start = ant_tour_nodes.index(start_index)
+                    ant_tour_nodes = ant_tour_nodes[ant_start:] + ant_tour_nodes[:ant_start] + [start_index]
+                rao_tour_2 = []
+                tour_ant = [(ant_tour_nodes[i],ant_tour_nodes[i+1]) for i in range(len(ant_tour_nodes)-1)]
+                for tup in tour_ant:
+                    path = shortest_path(G,tup[0],tup[1])
+                    for node in path:
+                        rao_tour_2.append(node)
+                rao_tour_2 = [rao_tour_2[i] for i in range(len(rao_tour_2)-1) if rao_tour_2[i] != rao_tour_2[i+1]] + [start_index]
+                # This the other TSP solver
                 tsp = TSP()
                 tsp.read_mat(nx.adjacency_matrix(G_prime).todense())
-                two_opt = TwoOpt_solver(initial_tour='NN', iter_num=2000)
+                two_opt = TwoOpt_solver(initial_tour='NN', iter_num=10000)
                 two_opt_tour = tsp.get_approx_solution(two_opt)
                 best_tour = tsp.get_best_solution()
                 center_tour = [G_prime_nodes[node] for node in best_tour]
@@ -133,17 +158,24 @@ def main():
                     start_loc = center_tour.index(start_index)
                     center_tour = center_tour[start_loc:] + center_tour[:start_loc] + [start_index]
                 tour = [(center_tour[i],center_tour[i+1]) for i in range(len(center_tour)-1)]
-                rao_tour = []
+                rao_tour_1 = []
                 for tup in tour:
                     path = shortest_path(G,tup[0],tup[1])
                     for node in path:
-                        rao_tour.append(node)
-                rao_tour = [rao_tour[i] for i in range(len(rao_tour)-1) if rao_tour[i] != rao_tour[i+1]] + [start_index]
-                cost = cost_of_solution(G,rao_tour,cluster_center_drop_off)[0]
-                if(cost < best_cost):
-                    best_cost = cost
-                    best_rao_tour = rao_tour
+                        rao_tour_1.append(node)
+                rao_tour_1 = [rao_tour_1[i] for i in range(len(rao_tour_1)-1) if rao_tour_1[i] != rao_tour_1[i+1]] + [start_index]
+                cost_1 = cost_of_solution(G,rao_tour_1,cluster_center_drop_off)[0]
+                cost_2 = cost_of_solution(G,rao_tour_2,cluster_center_drop_off)[0]
+                if(cost_1 < best_cost):
+                    best_cost = cost_1
+                    best_rao_tour = rao_tour_1
                     best_drop_off = cluster_center_drop_off
+                if(cost_2 < best_cost):
+                    best_cost = cost_2
+                    best_rao_tour = rao_tour_2
+                    best_drop_off = cluster_center_drop_off
+            except ZeroDivisionError:
+                continue
             except ValueError:
                 continue
             except OverflowError:
