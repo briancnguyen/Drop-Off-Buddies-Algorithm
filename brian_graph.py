@@ -12,20 +12,15 @@ class Graph:
         self.starting_car_location = starting_car_location
         self.adjacency_matrix = adjacency_matrix
         self.number_of_locations = len(self.list_of_locations)
-        self.number_of_houses = len(self.list_of_homes)
-        self.G, message = adjacency_matrix_to_graph(self.adjacency_matrix)
-        if message:
-            print(message)
-        else:
-            print("Successful instance of Graph class")
+        self.number_of_homes = len(self.list_of_homes)
+        self.G, _ = adjacency_matrix_to_graph(self.adjacency_matrix)
             
     def __arrangement_matrix(self):
         arrangement_matrix = []
         for r in range(self.number_of_locations):
             row = []
-            for c in range(self.number_of_houses + 2):
-                matrix_element_name = "A_" + str(r) + "_" + str(c)
-                row.append(self.model.addVar(vtype=grb.GRB.BINARY, name=matrix_element_name))
+            for c in range(self.number_of_homes + 2):
+                row.append(self.model.addVar(vtype=grb.GRB.BINARY, name="A_" + str(r) + "_" + str(c)))
                 self.model.update()
             arrangement_matrix.append(row)
         return np.array(arrangement_matrix)
@@ -36,7 +31,7 @@ class Graph:
         # Check that we start at Soda
         self.model.addConstr(self.arrangement_matrix[soda][0] == 1)
         # Check that we end at Soda
-        self.model.addConstr(self.arrangement_matrix[soda][self.number_of_houses + 1] == 1)
+        self.model.addConstr(self.arrangement_matrix[soda][self.number_of_homes + 1] == 1)
         # Check that each column of arrangement_matrix sums up to 1
         for c in range(self.arrangement_matrix.shape[1]):
             self.model.addConstr(grb.quicksum(self.arrangement_matrix[:, c]) == 1)
@@ -46,8 +41,7 @@ class Graph:
         for r in range(self.number_of_locations):
             row = []
             for c in range(self.number_of_locations):
-                matrix_element_name = "W_" + str(r) + "_" + str(c)
-                row.append(self.model.addVar(vtype=grb.GRB.BINARY, name=matrix_element_name))
+                row.append(self.model.addVar(vtype=grb.GRB.BINARY, name="W_" + str(r) + "_" + str(c)))
                 self.model.update()
             walking_matrix.append(row)
         return np.array(walking_matrix)
@@ -66,7 +60,7 @@ class Graph:
         """ Driving Cost Function """
         distances = nx.floyd_warshall_numpy(self.G)
         driving_cost_function = []
-        for c in range(self.number_of_houses + 1):
+        for c in range(self.number_of_homes + 1):
             summation = []
             for i in range(self.number_of_locations):
                 for j in range(self.number_of_locations):
@@ -84,7 +78,49 @@ class Graph:
         """ Set Objective Function """
         cost_function = driving_cost_function + walking_cost_function
         self.model.setObjective(grb.quicksum(cost_function), grb.GRB.MINIMIZE)
-            
+
+    def __optimal_A(self):
+        A = []
+        for v in self.model.getVars():
+            if v.VarName[0] == 'A':
+                A.append(v.x)
+        return np.array(A).reshape((self.number_of_locations, self.number_of_homes + 2))
+    
+    def __optimal_W(self):
+        W = []
+        for v in self.model.getVars():
+            if v.VarName[0] == 'W':
+                W.append(v.x)
+        return np.array(W).reshape((self.number_of_locations, self.number_of_locations))
+
+    def __ILP_car_path(self):
+        def path_compression(path):
+            locations = []
+            previous = None
+            for location in path:
+                if location != previous:
+                    locations.append(location)
+                previous = location
+            return locations
+        path, A = [], self.__optimal_A()
+        for c in range(A.shape[1]):
+            drop_off_vertex = np.where(A[:, c] == 1)[0][0]
+            path.append(drop_off_vertex)
+        return path_compression(path)
+
+    def __ILP_drop_offs(self):
+        TAs, D, W, homes_set = [], {}, self.__optimal_W(), set(self.list_of_homes)
+        for node in range(self.number_of_locations):
+            if self.list_of_locations[node] in homes_set:
+                TAs.append(node)
+        for node in TAs:
+            drop_off_vertex = np.where(W[:, node] == 1)[0][0]
+            if drop_off_vertex not in D:
+                D[drop_off_vertex] = [node,]
+            else:
+                D.get(drop_off_vertex).append(node)
+        return D
+
     def ILP(self):
         self.model = grb.Model()
         self.arrangement_matrix = self.__arrangement_matrix()
@@ -93,59 +129,5 @@ class Graph:
         self.__walking_constraints()
         self.__cost_function()
         self.model.optimize()
-        
-    def optimal_A(self):
-        A = []
-        for v in self.model.getVars():
-            if v.VarName[0] == 'A':
-                A.append(v.x)
-        return np.array(A).reshape((self.number_of_locations, self.number_of_houses + 2))
+        return self.__ILP_car_path(), self.__ILP_drop_offs()
     
-    def optimal_W(self):
-        W = []
-        for v in self.model.getVars():
-            if v.VarName[0] == 'W':
-                W.append(v.x)
-        return np.array(W).reshape((self.number_of_locations, self.number_of_locations))
-        
-
-# Output format
-"""
-Drop-Off Locations: Soda Dwinelle Campanile Barrows Soda
-Number of Distinct Locations Dropped Off: 3
-Soda Cory
-Dwinelle Wheeler RSF
-Campanile Campanile
-"""
-def car_cycle(graph, arrangement_matrix):
-    def drop_off_compression(cycle):
-        locations = []
-        previous = None
-        for location in cycle:
-            if location != previous:
-                locations.append(location)
-            previous = location
-        return locations
-    drop_offs = []
-    for c in range(arrangement_matrix.shape[1]):
-        drop_off_vertex = np.where(arrangement_matrix[:, c] == 1)[0][0]
-#         location = graph.vertex_to_location[drop_off_vertex]
-        drop_offs.append(drop_off_vertex)
-    return drop_off_compression(drop_offs)
-
-def num_distinct_drop_offs(cycle):
-    return len(set(cycle[1:-1]))
-
-def homes_at_drop_offs(graph, walking_matrix):
-    homes_set = set(graph.list_of_homes)
-    TAs, D = [], {}
-    for node in range(len(graph.list_of_locations)):
-        if graph.list_of_locations[node] in homes_set:
-            TAs.append(node)
-    for node in TAs:
-        drop_off_vertex = np.where(walking_matrix[:, node] == 1)[0][0]
-        if drop_off_vertex not in D:
-            D[drop_off_vertex] = [node,]
-        else:
-            D.get(drop_off_vertex).append(node)
-    return D

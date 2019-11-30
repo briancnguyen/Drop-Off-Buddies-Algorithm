@@ -23,9 +23,7 @@ def solve(list_of_locations, list_of_homes, starting_car_location, adjacency_mat
     """
     G = Graph(list_of_locations, list_of_homes, starting_car_location, adjacency_matrix)
     if params[0] == "ILP":
-        G.ILP()
-        car_path, drop_offs = car_cycle(G, G.optimal_A()), homes_at_drop_offs(G, G.optimal_W())
-        return car_path, drop_offs
+        return G.ILP()
 
 """
 Convert solution with path and dropoff_mapping in terms of indices
