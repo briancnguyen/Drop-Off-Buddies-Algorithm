@@ -6,15 +6,9 @@ import argparse
 import utils
 
 from student_utils import *
-"""
-======================================================================
-  Complete the following function.
-======================================================================
-"""
 
 def solve(list_of_locations, list_of_homes, starting_car_location, adjacency_matrix, params=[]):
     """
-    Write your algorithm here.
     Input:
         list_of_locations: A list of locations such that node i of the graph corresponds to name at index i of the list
         list_of_homes: A list of homes
@@ -25,13 +19,7 @@ def solve(list_of_locations, list_of_homes, starting_car_location, adjacency_mat
         A dictionary mapping drop-off location to a list of homes of TAs that got off at that particular location
         NOTE: both outputs should be in terms of indices not the names of the locations themselves
     """
-    pass
-
-"""
-======================================================================
-   No need to change any code below this line
-======================================================================
-"""
+    return
 
 """
 Convert solution with path and dropoff_mapping in terms of indices
