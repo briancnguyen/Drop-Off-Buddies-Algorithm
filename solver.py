@@ -6,6 +6,8 @@ import argparse
 import utils
 
 from student_utils import *
+from brian_graph import *
+
 
 def solve(list_of_locations, list_of_homes, starting_car_location, adjacency_matrix, params=[]):
     """
@@ -19,7 +21,11 @@ def solve(list_of_locations, list_of_homes, starting_car_location, adjacency_mat
         A dictionary mapping drop-off location to a list of homes of TAs that got off at that particular location
         NOTE: both outputs should be in terms of indices not the names of the locations themselves
     """
-    return
+    G = Graph(list_of_locations, list_of_homes, starting_car_location, adjacency_matrix)
+    if params[0] == "ILP":
+        G.ILP()
+        car_path, drop_offs = car_cycle(G, G.optimal_A()), homes_at_drop_offs(G, G.optimal_W())
+        return car_path, drop_offs
 
 """
 Convert solution with path and dropoff_mapping in terms of indices

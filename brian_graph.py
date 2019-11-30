@@ -6,17 +6,13 @@ import numpy as np
 
 """A class that performs data preprocessing and integer linear programming"""
 class Graph:
-    def __init__(self, input_file):
-        parsed_data = data_parser(read_file(input_file))
-        self.data = {}
-        self.input_file = input_file
-        self.number_of_locations = parsed_data[0] 
-        self.number_of_houses = parsed_data[1] 
-        self.list_of_locations = parsed_data[2]  
-        self.list_of_houses = parsed_data[3] 
-        self.starting_location = parsed_data[4] 
-        self.adjacency_matrix = parsed_data[5] 
-        self.vertex_to_location = dict(enumerate(self.list_of_locations))
+    def __init__(self, list_of_locations, list_of_homes, starting_car_location, adjacency_matrix):
+        self.list_of_locations = list_of_locations 
+        self.list_of_homes = list_of_homes 
+        self.starting_car_location = starting_car_location
+        self.adjacency_matrix = adjacency_matrix
+        self.number_of_locations = len(self.list_of_locations)
+        self.number_of_houses = len(self.list_of_homes)
         self.G, message = adjacency_matrix_to_graph(self.adjacency_matrix)
         if message:
             print(message)
@@ -36,7 +32,7 @@ class Graph:
         
     def __arrangement_constraints(self):
         # Get the index number of where Soda is
-        soda = self.list_of_locations.index(self.starting_location)
+        soda = self.list_of_locations.index(self.starting_car_location)
         # Check that we start at Soda
         self.model.addConstr(self.arrangement_matrix[soda][0] == 1)
         # Check that we end at Soda
@@ -58,7 +54,7 @@ class Graph:
         
     def __walking_constraints(self):
         # Boolean array of whether or not a location is a home by index
-        H = (np.array(convert_locations_to_indices(self.list_of_locations, self.list_of_houses)) != None).astype(int)
+        H = (np.array(convert_locations_to_indices(self.list_of_locations, self.list_of_homes)) != None).astype(int)
         # Check that each column i of walking_matrix sums up to H[i]
         for i in range(self.walking_matrix.shape[1]):
             self.model.addConstr(grb.quicksum(self.walking_matrix[:, i]) == H[i])
@@ -141,7 +137,7 @@ def num_distinct_drop_offs(cycle):
     return len(set(cycle[1:-1]))
 
 def homes_at_drop_offs(graph, walking_matrix):
-    homes_set = set(graph.list_of_houses)
+    homes_set = set(graph.list_of_homes)
     TAs, D = [], {}
     for node in range(len(graph.list_of_locations)):
         if graph.list_of_locations[node] in homes_set:
@@ -153,7 +149,3 @@ def homes_at_drop_offs(graph, walking_matrix):
         else:
             D.get(drop_off_vertex).append(node)
     return D
-
-# cycle = car_cycle(graph, graph.optimal_A())
-# num = num_distinct_drop_offs(cycle)
-# D = homes_at_drop_offs(graph, graph.optimal_W())
