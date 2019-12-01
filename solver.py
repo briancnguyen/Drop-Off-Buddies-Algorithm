@@ -77,6 +77,10 @@ def solve_all(input_directory, output_directory, params=[]):
     for input_file in input_files:
         solve_from_file(input_file, output_directory, params=params)
 
+    # with open('file_name', 'w') as f:
+    # for tuple in tuples:
+    #     f.write('%s %s %s\n' % tuple)
+
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description='Parsing arguments')
