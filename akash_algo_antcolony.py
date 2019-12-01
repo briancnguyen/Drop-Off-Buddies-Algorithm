@@ -72,7 +72,7 @@ def solve_antcolony(file,k,s):
         #alpha = how much pheromone matters #beta = how much distance matters
         colony = acopy.Colony(alpha=0.6, beta=6)
         solver = acopy.Solver(rho=.6, q=1)
-        ant_tour = solver.solve(G_prime, colony, limit=200)
+        ant_tour = solver.solve(G_prime, colony, limit=10)
         ant_tour_nodes = ant_tour.nodes
         cost = ant_tour.cost
         if(ant_tour_nodes.count(start_index)==1):
@@ -90,38 +90,35 @@ def solve_antcolony(file,k,s):
     best_drop_off = {}
     # k is the number of nearest neighbors around a node to consider
     try:
-        if(useless_count <= k_max):
-            print("--------")
-            print("k=" + str(k) + " k_max=" + str(k_max) + " | " + " s=" + str(s) + " s_max=" + str(s_max))
-            clusters_dict = jp(k, s)
-            cluster_centers, cluster_center_drop_off = get_clusters_and_dropoff(clusters_dict)
-            print("Clusters found")
-            if(len(cluster_center_drop_off) > 1):
-                useless_count = 0
-                #G_prime is the graph of clusters
-                G_prime = make_G_prime(cluster_centers)
-                print("Made Graph G_prime")
-                #Ant colony technique
-                rao_tour, cost = antcolony_solver(G_prime, start_index, cluster_center_drop_off)
-                print("** Computed Ant Colony Tour **")
-                best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost,best_rao_tour,best_drop_off,k,s,
-                cost,rao_tour,cluster_center_drop_off,k,s)
+        clusters_dict = jp(k, s)
+        cluster_centers, cluster_center_drop_off = get_clusters_and_dropoff(clusters_dict)
+        print("Clusters found")
+        if(len(cluster_center_drop_off) > 1):
+            useless_count = 0
+            #G_prime is the graph of clusters
+            G_prime = make_G_prime(cluster_centers)
+            print("Made Graph G_prime")
+            #Ant colony technique
+            rao_tour, cost = antcolony_solver(G_prime, start_index, cluster_center_drop_off)
+            print("** Computed Ant Colony Tour **")
+            best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost,best_rao_tour,best_drop_off,k,s,
+            cost,rao_tour,cluster_center_drop_off,k,s)
 
-            else:
-                soda_drop_flag = True
-                rao_tour = [start_index]
-                cost = faster_cost_soln(rao_tour,cluster_center_drop_off)
-                best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost, best_rao_tour, best_drop_off,k,s,
-                cost, rao_tour, cluster_center_drop_off,k,s)
+        else:
+            soda_drop_flag = True
+            rao_tour = [start_index]
+            cost = faster_cost_soln(rao_tour,cluster_center_drop_off)
+            best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost, best_rao_tour, best_drop_off,k,s,
+            cost, rao_tour, cluster_center_drop_off,k,s)
                 # except ZeroDivisionError:
                 #     continue
-            except ValueError:
-                s_max = s
-                continue
+    except ValueError:
+        print("VAL ERROR")
                 # except OverflowError:
                 #     continue
 
     #return best_rao_tour, best_drop_off
     print(best_cost)
-
+k = 3
+s= 2
 solve_antcolony('inputs/2_200.in',k,s)
