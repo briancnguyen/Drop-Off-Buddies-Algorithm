@@ -6,8 +6,8 @@ import argparse
 import utils
 
 from student_utils import *
-#from brian_ilp import *
-from akash_algo_tsp import *
+from brian_ilp import *
+from reduction import *
 
 
 def solve(num_of_locations, num_houses, list_of_locations, list_of_houses, starting_car_location, adjacency_matrix, params=[]):
@@ -26,13 +26,14 @@ def solve(num_of_locations, num_houses, list_of_locations, list_of_houses, start
         ilp = ILP(num_of_locations, num_houses, list_of_locations, list_of_houses, starting_car_location, adjacency_matrix)
         car_path, drop_off = ilp.solve()
         return car_path, drop_off
-    elif params[0] == "TwoOpt":
-        two_opt = TwoOpt(num_of_locations, num_houses, list_of_locations, list_of_houses, starting_car_location, adjacency_matrix)
-        car_path, drop_off, best_k, best_s = two_opt.solve()
-        return car_path, drop_off
-    elif params[0] == "Ant":
-        # Run Algorithm
-        return None, None
+    else:
+        r = Reduction(num_of_locations, num_houses, list_of_locations, list_of_houses, starting_car_location, adjacency_matrix)
+        if params[0] == "Ant":
+            car_path, drop_off = r.Ant_Colony_solve()
+            return car_path, drop_off
+        else: # 2-Opt TSP Solver: Default
+            car_path, drop_off, best_k, best_s = r.Two_Opt_solve()
+            return car_path, drop_off
 
 """
 Convert solution with path and dropoff_mapping in terms of indices
