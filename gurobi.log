@@ -9038,3 +9038,48 @@ Solution count 10: 119.3 119.8 120.4 ... 148.1
 
 Solve interrupted
 Best objective 1.193000000000e+02, best bound 2.430000000000e+01, gap 79.6312%
+
+Gurobi 8.1.1 (mac64, Python) logging started Sat Nov 30 23:50:21 2019
+
+Academic license - for non-commercial use only
+Optimize a model with 22 rows, 91 columns and 170 nonzeros
+Model has 210 quadratic objective terms
+Variable types: 0 continuous, 91 integer (91 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 2e+00]
+  QObjective range [2e+00, 4e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 13.0000000
+Presolve removed 7 rows and 35 columns
+Presolve time: 0.00s
+Presolved: 141 rows, 182 columns, 490 nonzeros
+Variable types: 0 continuous, 182 integer (182 binary)
+
+Root relaxation: objective 3.000000e+00, 23 iterations, 0.00 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0    3.00000    0    8   13.00000    3.00000  76.9%     -    0s
+H    0     0                       9.0000000    3.00000  66.7%     -    0s
+     0     0    3.00000    0   12    9.00000    3.00000  66.7%     -    0s
+H    0     0                       8.0000000    3.00000  62.5%     -    0s
+H    0     0                       7.0000000    3.00000  57.1%     -    0s
+     0     0    3.00000    0    8    7.00000    3.00000  57.1%     -    0s
+     0     0    3.00000    0    8    7.00000    3.00000  57.1%     -    0s
+     0     0    3.00000    0    8    7.00000    3.00000  57.1%     -    0s
+     0     2    3.00000    0    8    7.00000    3.00000  57.1%     -    0s
+H    3     2                       5.0000000    3.50000  30.0%  10.0    0s
+
+Cutting planes:
+  Zero half: 5
+
+Explored 7 nodes (113 simplex iterations) in 0.24 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 5: 5 7 8 ... 13
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 5.000000000000e+00, best bound 5.000000000000e+00, gap 0.0000%
