@@ -20,7 +20,6 @@ def solve_antcolony(file):
             return 10e100
 
     def find_centroid(cluster_nodes):
-        print("FC")
         cluster_dist = []
         for i in range(0,len(cluster_nodes)):
             node_dist = 0
@@ -47,7 +46,6 @@ def solve_antcolony(file):
                     center = find_centroid(clusters_dict[key])
                     centers.append(center)
                     center_drop_off[center] = drop_off
-        print(center_drop_off)
         return centers, center_drop_off
 
     def make_G_prime(cluster_centers):
