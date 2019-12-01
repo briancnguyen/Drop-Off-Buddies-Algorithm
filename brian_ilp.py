@@ -5,7 +5,7 @@ import networkx as nx
 import numpy as np
 
 """A class that performs data preprocessing and integer linear programming"""
-class Graph:
+class ILP:
     def __init__(self, list_of_locations, list_of_homes, starting_car_location, adjacency_matrix):
         self.list_of_locations = list_of_locations 
         self.list_of_homes = list_of_homes 
@@ -93,7 +93,7 @@ class Graph:
                 W.append(v.x)
         return np.array(W).reshape((self.number_of_locations, self.number_of_locations))
 
-    def __ILP_car_path(self):
+    def __car_path(self):
         def path_compression(path):
             locations = []
             previous = None
@@ -108,7 +108,7 @@ class Graph:
             path.append(drop_off_vertex)
         return path_compression(path)
 
-    def __ILP_drop_offs(self):
+    def __drop_offs(self):
         TAs, D, W, homes_set = [], {}, self.__optimal_W(), set(self.list_of_homes)
         for node in range(self.number_of_locations):
             if self.list_of_locations[node] in homes_set:
@@ -121,7 +121,7 @@ class Graph:
                 D.get(drop_off_vertex).append(node)
         return D
 
-    def ILP(self):
+    def solve(self):
         self.model = grb.Model()
         self.arrangement_matrix = self.__arrangement_matrix()
         self.walking_matrix = self.__walking_matrix()
@@ -129,5 +129,5 @@ class Graph:
         self.__walking_constraints()
         self.__cost_function()
         self.model.optimize()
-        return self.__ILP_car_path(), self.__ILP_drop_offs()
+        return self.__car_path(), self.__drop_offs()
     

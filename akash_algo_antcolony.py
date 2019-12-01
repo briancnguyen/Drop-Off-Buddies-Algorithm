@@ -89,9 +89,7 @@ def solve_antcolony(file):
     best_rao_tour = []
     best_drop_off = {}
     # k is the number of nearest neighbors around a node to consider
-    # s is the number of shared neighbors between u and v for them to be put into 1 cluster
-    k_max = min(15,num_houses)
-    s_max = 10
+
     soda_drop_flag = False
     useless_count = 0
     for k in range(1,2):
