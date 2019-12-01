@@ -22,7 +22,6 @@ def solve(num_of_locations, num_houses, list_of_locations, list_of_houses, start
         A dictionary mapping drop-off location to a list of homes of TAs that got off at that particular location
         NOTE: both outputs should be in terms of indices not the names of the locations themselves
     """
-    two_opt = TwoOpt(num_of_locations, num_houses, list_of_locations, list_of_houses, starting_car_location, adjacency_matrix)
     if params[0] == "ILP":
         ilp = ILP(num_of_locations, num_houses, list_of_locations, list_of_houses, starting_car_location, adjacency_matrix)
         return ilp.solve()
