@@ -93,7 +93,7 @@ class ILP:
                 W.append(v.x)
         return np.array(W).reshape((self.number_of_locations, self.number_of_locations))
 
-    def __ILP_car_path(self):
+    def __car_path(self):
         def path_compression(path):
             locations = []
             previous = None
@@ -108,7 +108,7 @@ class ILP:
             path.append(drop_off_vertex)
         return path_compression(path)
 
-    def __ILP_drop_offs(self):
+    def __drop_offs(self):
         TAs, D, W, homes_set = [], {}, self.__optimal_W(), set(self.list_of_homes)
         for node in range(self.number_of_locations):
             if self.list_of_locations[node] in homes_set:
@@ -129,5 +129,5 @@ class ILP:
         self.__walking_constraints()
         self.__cost_function()
         self.model.optimize()
-        return self.__ILP_car_path(), self.__ILP_drop_offs()
+        return self.__car_path(), self.__drop_offs()
     
