@@ -92,24 +92,6 @@ class Reduction:
         cost_1 = self.faster_cost_solution(rao_tour_1, cluster_center_drop_off)
         return rao_tour_1, cost_1
 
-    # Used http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.96.6751&rep=rep1&type=pdf for ant colony hyperparam
-    def Ant_Colony_solver(self, G_prime, start_index, cluster_center_drop_off):
-        # alpha = how much pheromone matters 
-        # beta = how much distance matters
-        colony = acopy.Colony(alpha=0.6, beta=6)
-        solver = acopy.Solver(rho=.6, q=1)
-        ant_tour = solver.solve(G_prime, colony, limit=10)
-        ant_tour_nodes = ant_tour.nodes
-        cost = ant_tour.cost
-        if(ant_tour_nodes.count(start_index)==1):
-            ant_start = ant_tour_nodes.index(start_index)
-            ant_tour_nodes = ant_tour_nodes[ant_start:] + ant_tour_nodes[:ant_start] + [start_index]
-        tour_ant = [(ant_tour_nodes[i],ant_tour_nodes[i+1]) for i in range(len(ant_tour_nodes)-1)]
-        rao_tour_2 = compute_tour_paths(self.G, tour_ant)
-        rao_tour_2 = [rao_tour_2[i] for i in range(len(rao_tour_2)-1) if rao_tour_2[i] != rao_tour_2[i+1]] + [start_index]
-        cost = self.faster_cost_solution(rao_tour_2, cluster_center_drop_off)
-        return rao_tour_2, cost
-
     def Two_Opt_solve(self):
         best_cost = 10e1000
         best_rao_tour = []
@@ -157,6 +139,24 @@ class Reduction:
                 #     continue
         print("BEST COST: " + str(best_cost))
         return best_rao_tour, best_drop_off, best_k, best_s
+
+    # Used http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.96.6751&rep=rep1&type=pdf for ant colony hyperparam
+    def Ant_Colony_solver(self, G_prime, start_index, cluster_center_drop_off):
+        # alpha = how much pheromone matters 
+        # beta = how much distance matters
+        colony = acopy.Colony(alpha=0.6, beta=6)
+        solver = acopy.Solver(rho=.6, q=1)
+        ant_tour = solver.solve(G_prime, colony, limit=10)
+        ant_tour_nodes = ant_tour.nodes
+        cost = ant_tour.cost
+        if(ant_tour_nodes.count(start_index)==1):
+            ant_start = ant_tour_nodes.index(start_index)
+            ant_tour_nodes = ant_tour_nodes[ant_start:] + ant_tour_nodes[:ant_start] + [start_index]
+        tour_ant = [(ant_tour_nodes[i],ant_tour_nodes[i+1]) for i in range(len(ant_tour_nodes)-1)]
+        rao_tour_2 = compute_tour_paths(self.G, tour_ant)
+        rao_tour_2 = [rao_tour_2[i] for i in range(len(rao_tour_2)-1) if rao_tour_2[i] != rao_tour_2[i+1]] + [start_index]
+        cost = self.faster_cost_solution(rao_tour_2, cluster_center_drop_off)
+        return rao_tour_2, cost
 
     def Ant_Colony_solve(self, k=5, s=4):
         best_cost = 10e1000

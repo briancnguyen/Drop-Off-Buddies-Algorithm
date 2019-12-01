@@ -13,7 +13,7 @@ class ILP:
         self.list_of_houses = list_of_houses 
         self.starting_car_location = starting_car_location
         self.adjacency_matrix = adjacency_matrix
-        self.G, _ = adjacency_matrix_to_graph(self.adjacency_matrix)
+        self.G = adjacency_matrix_to_graph(self.adjacency_matrix)[0]
             
     def __arrangement_matrix(self):
         arrangement_matrix = []
