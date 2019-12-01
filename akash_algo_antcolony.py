@@ -11,13 +11,19 @@ from JarvisPatrick_init import *
 def solve_antcolony(file):
     num_loc, num_houses, list_loc, list_houses, start, adj_matrix, G, location_indices, house_indices, start_index = get_input_data(file)
 
+    F_W_dict = nx.floyd_warshall(G)
+    def faster_cost_soln(rao_tour, drop_off):
+        rao_cost = 0
+        walk_cost = 0
+        for i in range(len(rao_tour)-1):
+            rao_cost += F_W_dict[rao_tour[i]][rao_tour[i+1]]
+        for key in drop_off:
+            for target in drop_off[key]:
+                walk_cost += F_W_dict[key][target]
+        return (2/3)*rao_cost + walk_cost
+
     def distance(node_1, node_2):
-        try:
-            return nx.shortest_path_length(G,node_1,node_2,'weight')
-        except nx.NetworkXNoPath:
-            return 10e100
-        except nx.NodeNotFound:
-            return 10e100
+        return F_W_dict[node_1][node_2]
 
     def find_centroid(cluster_nodes):
         cluster_dist = []
@@ -28,6 +34,18 @@ def solve_antcolony(file):
             cluster_dist.append(node_dist)
         min_dist = min(cluster_dist)
         return cluster_nodes[cluster_dist.index(min_dist)]
+
+
+    def make_G_prime(cluster_centers):
+        G_prime = nx.Graph()
+        for node_1 in cluster_centers:
+            for node_2 in cluster_centers:
+                if(node_1 == node_2):
+                    continue
+                else:
+                    dist = distance(node_1,node_2)
+                    G_prime.add_edge(node_1,node_2, weight=dist)
+        return G_prime
 
     # Creates list of cluster_centers, these are where we drop drop_off
     # also does pruning to remove useless clusters
@@ -48,29 +66,6 @@ def solve_antcolony(file):
                     center_drop_off[center] = drop_off
         return centers, center_drop_off
 
-    def make_G_prime(cluster_centers):
-        G_prime = nx.Graph()
-        for node_1 in cluster_centers:
-            for node_2 in cluster_centers:
-                if(node_1 == node_2):
-                    continue
-                else:
-                    dist = distance(node_1,node_2)
-                    if(dist != 10e100):
-                        G_prime.add_edge(node_1,node_2, weight=dist)
-        return G_prime
-
-
-    F_W_dict = nx.floyd_warshall(G)
-    def faster_cost_soln(rao_tour, drop_off):
-        rao_cost = 0
-        walk_cost = 0
-        for i in range(len(rao_tour)-1):
-            rao_cost += F_W_dict[rao_tour[i]][rao_tour[i+1]]
-        for key in drop_off:
-            for target in drop_off[key]:
-                walk_cost += F_W_dict[key][target]
-        return (2/3)*rao_cost + walk_cost
 
     def antcolony_solver(G_prime, start_index, cluster_center_drop_off):
         #alpha = how much pheromone matters #beta = how much distance matters
@@ -95,37 +90,36 @@ def solve_antcolony(file):
     # k is the number of nearest neighbors around a node to consider
     # s is the number of shared neighbors between u and v for them to be put into 1 cluster
     k_max = 15
-    s_max = 5
-    useless_count = 0
+    s_max = 8
+    if(num_loc <= 75):
+        k_max = num_loc
+        s_max = num_houses
     soda_drop_flag = False
-    soda_drop = []
-    for k in range(5,k_max):
+    for k in range(1,k_max):
         for s in range(1,s_max):
             try:
-                if(useless_count < 5):
-                    print("--------")
-                    print("k=" + str(k) + " k_max=" + str(k_max) + " | " + " s=" + str(s) + " s_max=" + str(s_max))
-                    clusters_dict = jp(k, s)
-                    cluster_centers, cluster_center_drop_off = get_clusters_and_dropoff(clusters_dict)
-                    if(len(cluster_center_drop_off) > 1):
-                        useless_count = 0
-                        #G_prime is the graph of clusters
-                        G_prime = make_G_prime(cluster_centers)
-                        print("Made Graph G_prime")
-                        #Ant colony technique
-                        rao_tour, cost = antcolony_solver(G_prime, start_index, cluster_center_drop_off)
-                        print("** Computed Ant Colony Tour **")
-                        best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost,best_rao_tour,best_drop_off,
-                                                                                cost,rao_tour,cluster_center_drop_off)
+                print("--------")
+                print("k=" + str(k) + " k_max=" + str(k_max) + " | " + " s=" + str(s) + " s_max=" + str(s_max))
+                clusters_dict = jp(k, s)
+                cluster_centers, cluster_center_drop_off = get_clusters_and_dropoff(clusters_dict)
+                print("Clusters found")
+                if(len(cluster_center_drop_off) > 1):
+                    useless_count = 0
+                    #G_prime is the graph of clusters
+                    G_prime = make_G_prime(cluster_centers)
+                    print("Made Graph G_prime")
+                    #Ant colony technique
+                    rao_tour, cost = antcolony_solver(G_prime, start_index, cluster_center_drop_off)
+                    print("** Computed Ant Colony Tour **")
+                    best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost,best_rao_tour,best_drop_off,
+                    cost,rao_tour,cluster_center_drop_off)
 
-                    else:
-                        useless_count += 1
-                        if(not soda_drop_flag):
-                            soda_drop_flag = True
-                            rao_tour = [start_index]
-                            cost = faster_cost_soln(rao_tour,cluster_center_drop_off)
-                            best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost, best_rao_tour, best_drop_off,
-                                                                                    cost, rao_tour, cluster_center_drop_off)
+                    if(not soda_drop_flag):
+                        soda_drop_flag = True
+                        rao_tour = [start_index]
+                        cost = faster_cost_soln(rao_tour,cluster_center_drop_off)
+                        best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost, best_rao_tour, best_drop_off,
+                        cost, rao_tour, cluster_center_drop_off)
 
             # except ZeroDivisionError:
             #     continue
@@ -137,4 +131,4 @@ def solve_antcolony(file):
     #return best_rao_tour, best_drop_off
     print(best_cost)
 
-solve_antcolony('inputs/2_50.in')
+solve_antcolony('inputs/2_200.in')
