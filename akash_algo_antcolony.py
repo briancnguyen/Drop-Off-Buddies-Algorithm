@@ -72,7 +72,7 @@ def solve_antcolony(file):
         #alpha = how much pheromone matters #beta = how much distance matters
         colony = acopy.Colony(alpha=0.6, beta=6)
         solver = acopy.Solver(rho=.6, q=1)
-        ant_tour = solver.solve(G_prime, colony, limit=10)
+        ant_tour = solver.solve(G_prime, colony, limit=200)
         ant_tour_nodes = ant_tour.nodes
         cost = ant_tour.cost
         if(ant_tour_nodes.count(start_index)==1):
@@ -90,36 +90,38 @@ def solve_antcolony(file):
     best_drop_off = {}
     # k is the number of nearest neighbors around a node to consider
     # s is the number of shared neighbors between u and v for them to be put into 1 cluster
-    k_max = min(35,num_houses))
-    s_max = 20
+    k_max = min(15,num_houses)
+    s_max = 10
     soda_drop_flag = False
-    for k in range(1,k_max):
-        for s in range(1,s_max):
+    useless_count = 0
+    for k in range(1,2):
+        for s in range(1,2):
             try:
-                print("--------")
-                print("k=" + str(k) + " k_max=" + str(k_max) + " | " + " s=" + str(s) + " s_max=" + str(s_max))
-                clusters_dict = jp(k, s)
-                cluster_centers, cluster_center_drop_off = get_clusters_and_dropoff(clusters_dict)
-                print("Clusters found")
-                if(len(cluster_center_drop_off) > 1):
-                    useless_count = 0
-                    #G_prime is the graph of clusters
-                    G_prime = make_G_prime(cluster_centers)
-                    print("Made Graph G_prime")
-                    #Ant colony technique
-                    rao_tour, cost = antcolony_solver(G_prime, start_index, cluster_center_drop_off)
-                    print("** Computed Ant Colony Tour **")
-                    best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost,best_rao_tour,best_drop_off,
-                    cost,rao_tour,cluster_center_drop_off)
+                if(useless_count <= k_max):
+                    print("--------")
+                    print("k=" + str(k) + " k_max=" + str(k_max) + " | " + " s=" + str(s) + " s_max=" + str(s_max))
+                    clusters_dict = jp(k, s)
+                    cluster_centers, cluster_center_drop_off = get_clusters_and_dropoff(clusters_dict)
+                    print("Clusters found")
+                    if(len(cluster_center_drop_off) > 1):
+                        useless_count = 0
+                        #G_prime is the graph of clusters
+                        G_prime = make_G_prime(cluster_centers)
+                        print("Made Graph G_prime")
+                        #Ant colony technique
+                        rao_tour, cost = antcolony_solver(G_prime, start_index, cluster_center_drop_off)
+                        print("** Computed Ant Colony Tour **")
+                        best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost,best_rao_tour,best_drop_off,k,s,
+                        cost,rao_tour,cluster_center_drop_off,k,s)
 
-                else:
-                    if(not soda_drop_flag):
-                        soda_drop_flag = True
-                        rao_tour = [start_index]
-                        cost = faster_cost_soln(rao_tour,cluster_center_drop_off)
-                        best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost, best_rao_tour, best_drop_off,
-                        cost, rao_tour, cluster_center_drop_off)
-                        print()
+                    else:
+                        useless_count += 1
+                        if(not soda_drop_flag):
+                            soda_drop_flag = True
+                            rao_tour = [start_index]
+                            cost = faster_cost_soln(rao_tour,cluster_center_drop_off)
+                            best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost, best_rao_tour, best_drop_off,k,s,
+                                                                        cost, rao_tour, cluster_center_drop_off,k,s)
             # except ZeroDivisionError:
             #     continue
             except ValueError:

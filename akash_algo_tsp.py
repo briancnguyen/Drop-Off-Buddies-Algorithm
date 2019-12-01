@@ -90,7 +90,9 @@ def solve_tsp(file):
     jp = JarvisPatrick(location_indices, distance)
     best_cost = 10e1000
     best_rao_tour = []
+    best_k = 0
     best_drop_off = {}
+    best_s = 0
     # k is the number of nearest neighbors around a node to consider
     # s is the number of shared neighbors between u and v for them to be put into 1 cluster
     k_max = num_loc
@@ -114,16 +116,16 @@ def solve_tsp(file):
                         #Ant colony technique
                         rao_tour, cost = tsp_solver_1(G_prime,G_prime_nodes, start_index, cluster_center_drop_off)
                         print("** Computed TSP Tour **")
-                        best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost,best_rao_tour,best_drop_off,
-                                                                                cost,rao_tour,cluster_center_drop_off)
+                        best_cost, best_rao_tour, best_drop_off,best_k,best_s = compare_cost(best_cost, best_rao_tour, best_drop_off,best_k,best_s,
+                                                                                cost, rao_tour, cluster_center_drop_off,k,s)
                     else:
                         useless_count += 1
                         if(not soda_drop_flag):
                             soda_drop_flag = True
                             rao_tour = [start_index]
                             cost = faster_cost_soln(rao_tour,cluster_center_drop_off)
-                            best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost, best_rao_tour, best_drop_off,
-                                                                                    cost, rao_tour, cluster_center_drop_off)
+                            best_cost, best_rao_tour, best_drop_off,best_k,best_s = compare_cost(best_cost, best_rao_tour, best_drop_off,best_k,best_s,
+                                                                                    cost, rao_tour, cluster_center_drop_off,k,s)
 
 
             # except ZeroDivisionError:
