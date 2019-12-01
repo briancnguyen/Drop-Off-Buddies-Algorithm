@@ -80,7 +80,7 @@ class Reduction:
     def Two_Opt_solver(self, G_prime, G_prime_nodes, start_index, cluster_center_drop_off):
         tsp = TSP()
         tsp.read_mat(nx.adjacency_matrix(G_prime).todense())
-        two_opt = TwoOpt_solver(initial_tour='NN', iter_num=1000)
+        two_opt = TwoOpt_solver(initial_tour='NN', iter_num=100)
         best_tour = tsp.get_approx_solution(two_opt)
         center_tour = [G_prime_nodes[node] for node in best_tour]
         if(center_tour.count(start_index) == 1):
@@ -107,7 +107,7 @@ class Reduction:
         for k in range(1, k_max):
             for s in range(1, s_max):
                 try:
-                    if (useless_count < int(self.number_of_locations/4)):
+                    if (useless_count < k_max):
                         print("--------")
                         print("k=" + str(k) + " k_max=" + str(k_max) + " | " + " s=" + str(s) + " s_max=" + str(s_max))
                         clusters_dict = self.JP(k, s)
@@ -142,7 +142,7 @@ class Reduction:
 
     # Used http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.96.6751&rep=rep1&type=pdf for ant colony hyperparam
     def Ant_Colony_solver(self, G_prime, start_index, cluster_center_drop_off):
-        # alpha = how much pheromone matters 
+        # alpha = how much pheromone matters
         # beta = how much distance matters
         colony = acopy.Colony(alpha=0.6, beta=6)
         solver = acopy.Solver(rho=.6, q=1)
@@ -190,4 +190,4 @@ class Reduction:
                     # except OverflowError:
                     #     continue
         print(best_cost)
-        return best_rao_tour, best_drop_off 
+        return best_rao_tour, best_drop_off
