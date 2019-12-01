@@ -100,14 +100,14 @@ class Reduction:
         best_s = 0
         # k is the number of nearest neighbors around a node to consider
         # s is the number of shared neighbors between u and v for them to be put into 1 cluster
-        k_max = self.number_of_locations
-        s_max = min(30, int(self.number_of_homes/2))
+        k_max = int(self.number_of_locations/2)
+        s_max = min(20, int(self.number_of_homes/2))
         soda_drop_flag = False
         useless_count = 0
         for k in range(1, k_max):
             for s in range(1, s_max):
                 try:
-                    if (useless_count < k_max):
+                    if (useless_count < 2*s_max):
                         print("--------")
                         print("k=" + str(k) + " k_max=" + str(k_max) + " | " + " s=" + str(s) + " s_max=" + str(s_max))
                         clusters_dict = self.JP(k, s)
