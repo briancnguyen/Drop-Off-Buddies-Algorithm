@@ -10,7 +10,7 @@ from student_utils import *
 from algorithms.reduction import *
 
 
-def solve(num_of_locations, num_houses, list_of_locations, list_of_houses, starting_car_location, adjacency_matrix, params=[]):
+def solve(input_file, num_of_locations, num_houses, list_of_locations, list_of_houses, starting_car_location, adjacency_matrix, params=[]):
     """
     Input:
         list_of_locations: A list of locations such that node i of the graph corresponds to name at index i of the list
@@ -22,6 +22,9 @@ def solve(num_of_locations, num_houses, list_of_locations, list_of_houses, start
         A dictionary mapping drop-off location to a list of homes of TAs that got off at that particular location
         NOTE: both outputs should be in terms of indices not the names of the locations themselves
     """
+    if params[1] != "all" and params[1] not in input_file:
+        return None, None
+        
     if params[0] == "ILP":
         ilp = ILP(num_of_locations, num_houses, list_of_locations, list_of_houses, starting_car_location, adjacency_matrix)
         car_path, drop_off = ilp.solve()
@@ -65,7 +68,10 @@ def solve_from_file(input_file, output_directory, params=[]):
 
     input_data = utils.read_file(input_file)
     num_of_locations, num_houses, list_locations, list_houses, starting_car_location, adjacency_matrix = data_parser(input_data)
-    car_path, drop_offs = solve(num_of_locations, num_houses, list_locations, list_houses, starting_car_location, adjacency_matrix, params=params)
+    car_path, drop_offs = solve(input_file, num_of_locations, num_houses, list_locations, list_houses, starting_car_location, adjacency_matrix, params=params)
+
+    if car_path is None and drop_offs is None:
+        return 
 
     basename, filename = os.path.split(input_file)
     if not os.path.exists(output_directory):
