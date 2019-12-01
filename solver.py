@@ -24,10 +24,12 @@ def solve(num_of_locations, num_houses, list_of_locations, list_of_houses, start
     """
     if params[0] == "ILP":
         ilp = ILP(num_of_locations, num_houses, list_of_locations, list_of_houses, starting_car_location, adjacency_matrix)
-        return ilp.solve()
+        car_path, drop_off = ilp.solve()
+        return car_path, drop_off
     elif params[0] == "TwoOpt":
         two_opt = TwoOpt(num_of_locations, num_houses, list_of_locations, list_of_houses, starting_car_location, adjacency_matrix)
-        return two_opt.solve()
+        car_path, drop_off, best_k, best_s = two_opt.solve()
+        return car_path, drop_off
     elif params[0] == "Ant":
         # Run Algorithm
         return None, None

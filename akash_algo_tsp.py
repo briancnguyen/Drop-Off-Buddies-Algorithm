@@ -97,6 +97,8 @@ class TwoOpt:
         best_cost = 10e1000
         best_rao_tour = []
         best_drop_off = {}
+        best_k = 0
+        best_s = 0
         # k is the number of nearest neighbors around a node to consider
         # s is the number of shared neighbors between u and v for them to be put into 1 cluster
         k_max = self.number_of_locations
@@ -120,18 +122,16 @@ class TwoOpt:
                             #Ant colony technique
                             rao_tour, cost = self.tsp_solver(G_prime, G_prime_nodes, self.start_index, cluster_center_drop_off)
                             print("** Computed TSP Tour **")
-                            best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost,best_rao_tour,best_drop_off,
-                                                                                    cost,rao_tour,cluster_center_drop_off)
+                            best_cost, best_rao_tour, best_drop_off,best_k,best_s = compare_cost(best_cost, best_rao_tour, best_drop_off,best_k,best_s,
+                                                                                cost, rao_tour, cluster_center_drop_off,k,s)
                         else:
                             useless_count += 1
                             if(not soda_drop_flag):
                                 soda_drop_flag = True
                                 rao_tour = [self.start_index]
                                 cost = self.faster_cost_solution(rao_tour, cluster_center_drop_off)
-                                best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost, best_rao_tour, best_drop_off,
-                                                                                        cost, rao_tour, cluster_center_drop_off)
-
-
+                                best_cost, best_rao_tour, best_drop_off,best_k,best_s = compare_cost(best_cost, best_rao_tour, best_drop_off,best_k,best_s,
+                                                                                    cost, rao_tour, cluster_center_drop_off,k,s)
                 # except ZeroDivisionError:
                 #     continue
                 except ValueError:
@@ -140,6 +140,4 @@ class TwoOpt:
                 #     continue
         #return best_rao_tour, best_drop_off
         print("BEST COST: " + str(best_cost))
-        return best_rao_tour, best_drop_off
-
-# solve_tsp('inputs/2_200.in')
+        return best_rao_tour, best_drop_off, best_k, best_s
