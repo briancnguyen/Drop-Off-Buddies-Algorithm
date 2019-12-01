@@ -74,9 +74,8 @@ def solve_tsp(file):
     def tsp_solver_1(G_prime, G_prime_nodes, start_index, cluster_center_drop_off):
         tsp = TSP()
         tsp.read_mat(nx.adjacency_matrix(G_prime).todense())
-        two_opt = TwoOpt_solver(initial_tour='NN', iter_num=20)
+        two_opt = TwoOpt_solver(initial_tour='NN', iter_num=1000)
         best_tour = tsp.get_approx_solution(two_opt)
-        #best_tour = tsp.get_best_solution()
         center_tour = [G_prime_nodes[node] for node in best_tour]
         if(center_tour.count(start_index) == 1):
             start_loc = center_tour.index(start_index)
@@ -94,11 +93,8 @@ def solve_tsp(file):
     best_drop_off = {}
     # k is the number of nearest neighbors around a node to consider
     # s is the number of shared neighbors between u and v for them to be put into 1 cluster
-    k_max = 15
-    s_max = 8
-    if(num_loc <= 75):
-        k_max = num_loc
-        s_max = num_houses
+    k_max = num_loc
+    s_max = min(30,num_houses/2)
     soda_drop_flag = False
     for k in range(1,k_max):
         for s in range(1,s_max):
@@ -130,6 +126,7 @@ def solve_tsp(file):
             # except ZeroDivisionError:
             #     continue
             except ValueError:
+                s_max = s
                 continue
             # except OverflowError:
             #     continue

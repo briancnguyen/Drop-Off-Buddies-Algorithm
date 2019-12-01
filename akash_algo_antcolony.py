@@ -90,11 +90,8 @@ def solve_antcolony(file):
     best_drop_off = {}
     # k is the number of nearest neighbors around a node to consider
     # s is the number of shared neighbors between u and v for them to be put into 1 cluster
-    k_max = 5
-    s_max = 4
-    if(num_loc <= 75):
-        k_max = num_loc
-        s_max = num_houses
+    k_max = min(35,num_houses))
+    s_max = 20
     soda_drop_flag = False
     for k in range(1,k_max):
         for s in range(1,s_max):
@@ -126,6 +123,7 @@ def solve_antcolony(file):
             # except ZeroDivisionError:
             #     continue
             except ValueError:
+                s_max = s
                 continue
             # except OverflowError:
             #     continue
