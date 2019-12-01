@@ -6,8 +6,8 @@ import argparse
 import utils
 
 from student_utils import *
-from brian_ilp import *
-from reduction import *
+from algorithms.ilp import *
+from algorithms.reduction import *
 
 
 def solve(num_of_locations, num_houses, list_of_locations, list_of_houses, starting_car_location, adjacency_matrix, params=[]):
