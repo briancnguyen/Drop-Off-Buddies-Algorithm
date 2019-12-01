@@ -36,5 +36,4 @@ def get_input_data(file):
     location_indices = convert_locations_to_indices(list_loc,list_loc)
     house_indices = convert_locations_to_indices(list_houses,list_loc)
     start_index = list_loc.index(start)
-
     return num_loc, num_houses, list_loc, list_houses, start, adj_matrix, G, location_indices, house_indices, start_index

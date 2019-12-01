@@ -6,13 +6,13 @@ import numpy as np
 
 """A class that performs data preprocessing and integer linear programming"""
 class ILP:
-    def __init__(self, list_of_locations, list_of_homes, starting_car_location, adjacency_matrix):
+    def __init__(self, num_of_locations, num_houses, list_of_locations, list_of_houses, starting_car_location, adjacency_matrix):
+        self.number_of_locations = num_of_locations
+        self.number_of_homes = num_houses
         self.list_of_locations = list_of_locations 
-        self.list_of_homes = list_of_homes 
+        self.list_of_houses = list_of_houses 
         self.starting_car_location = starting_car_location
         self.adjacency_matrix = adjacency_matrix
-        self.number_of_locations = len(self.list_of_locations)
-        self.number_of_homes = len(self.list_of_homes)
         self.G, _ = adjacency_matrix_to_graph(self.adjacency_matrix)
             
     def __arrangement_matrix(self):
@@ -48,7 +48,7 @@ class ILP:
         
     def __walking_constraints(self):
         # Boolean array of whether or not a location is a home by index
-        H = (np.array(convert_locations_to_indices(self.list_of_locations, self.list_of_homes)) != None).astype(int)
+        H = (np.array(convert_locations_to_indices(self.list_of_locations, self.list_of_houses)) != None).astype(int)
         # Check that each column i of walking_matrix sums up to H[i]
         for i in range(self.walking_matrix.shape[1]):
             self.model.addConstr(grb.quicksum(self.walking_matrix[:, i]) == H[i])
@@ -109,7 +109,7 @@ class ILP:
         return path_compression(path)
 
     def __drop_offs(self):
-        TAs, D, W, homes_set = [], {}, self.__optimal_W(), set(self.list_of_homes)
+        TAs, D, W, homes_set = [], {}, self.__optimal_W(), set(self.list_of_houses)
         for node in range(self.number_of_locations):
             if self.list_of_locations[node] in homes_set:
                 TAs.append(node)

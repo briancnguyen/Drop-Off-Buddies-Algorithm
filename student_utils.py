@@ -17,7 +17,6 @@ def data_parser(input_data):
     list_of_locations = input_data[2]
     list_of_houses = input_data[3]
     starting_location = input_data[4][0]
-
     adjacency_matrix = [[entry if entry == 'x' else float(entry) for entry in row] for row in input_data[5:]]
     return number_of_locations, number_of_houses, list_of_locations, list_of_houses, starting_location, adjacency_matrix
 

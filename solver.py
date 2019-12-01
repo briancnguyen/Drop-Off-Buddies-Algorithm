@@ -7,9 +7,10 @@ import utils
 
 from student_utils import *
 from brian_ilp import *
+from akash_algo_tsp import *
 
 
-def solve(list_of_locations, list_of_homes, starting_car_location, adjacency_matrix, params=[]):
+def solve(num_of_locations, num_houses, list_of_locations, list_of_houses, starting_car_location, adjacency_matrix, params=[]):
     """
     Input:
         list_of_locations: A list of locations such that node i of the graph corresponds to name at index i of the list
@@ -21,9 +22,16 @@ def solve(list_of_locations, list_of_homes, starting_car_location, adjacency_mat
         A dictionary mapping drop-off location to a list of homes of TAs that got off at that particular location
         NOTE: both outputs should be in terms of indices not the names of the locations themselves
     """
+    two_opt = TwoOpt(num_of_locations, num_houses, list_of_locations, list_of_houses, starting_car_location, adjacency_matrix)
     if params[0] == "ILP":
-        ilp = ILP(list_of_locations, list_of_homes, starting_car_location, adjacency_matrix)
+        ilp = ILP(num_of_locations, num_houses, list_of_locations, list_of_houses, starting_car_location, adjacency_matrix)
         return ilp.solve()
+    elif params[0] == "TwoOpt":
+        two_opt = TwoOpt(num_of_locations, num_houses, list_of_locations, list_of_houses, starting_car_location, adjacency_matrix)
+        return two_opt.solve()
+    elif params[0] == "Ant":
+        # Run Algorithm
+        return None, None
 
 """
 Convert solution with path and dropoff_mapping in terms of indices
@@ -52,7 +60,7 @@ def solve_from_file(input_file, output_directory, params=[]):
 
     input_data = utils.read_file(input_file)
     num_of_locations, num_houses, list_locations, list_houses, starting_car_location, adjacency_matrix = data_parser(input_data)
-    car_path, drop_offs = solve(list_locations, list_houses, starting_car_location, adjacency_matrix, params=params)
+    car_path, drop_offs = solve(num_of_locations, num_houses, list_locations, list_houses, starting_car_location, adjacency_matrix, params=params)
 
     basename, filename = os.path.split(input_file)
     if not os.path.exists(output_directory):

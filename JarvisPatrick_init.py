@@ -26,7 +26,6 @@ class JarvisPatrick(object):
         result = defaultdict(list)
         for element, cluster_nro in self.cluster.items():
             result[cluster_nro].append(element)
-
         return result
 
     def reconfigure_clusters(self, element, other_element):
