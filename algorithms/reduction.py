@@ -114,11 +114,11 @@ class Reduction:
                         cluster_centers, cluster_center_drop_off = self.get_clusters_and_dropoff(clusters_dict)
                         if (len(cluster_center_drop_off) > 1):
                             useless_count = 0
-                            #G_prime is the graph of clusters
+                            # G_prime is the graph of clusters
                             G_prime = self.make_G_prime(cluster_centers)
                             G_prime_nodes = {i : cluster_centers[i] for i in range(len(cluster_centers))}
                             print("Made Graph G_prime")
-                            #Ant colony technique
+                            # 2-OPT TSP Solver
                             rao_tour, cost = self.Two_Opt_solver(G_prime, G_prime_nodes, self.start_index, cluster_center_drop_off)
                             print("** Computed TSP Tour **")
                             best_cost, best_rao_tour, best_drop_off,best_k,best_s = compare_cost(best_cost, best_rao_tour, best_drop_off,best_k,best_s,
@@ -172,7 +172,7 @@ class Reduction:
                 # G_prime is the graph of clusters
                 G_prime = self.make_G_prime(cluster_centers)
                 print("Made Graph G_prime")
-                # Ant colony technique
+                # Ant Colony Technique
                 rao_tour, cost = self.Ant_Colony_solver(G_prime, self.start_index, cluster_center_drop_off)
                 print("** Computed Ant Colony Tour **")
                 best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost,best_rao_tour,best_drop_off,k,s,

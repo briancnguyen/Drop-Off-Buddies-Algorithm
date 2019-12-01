@@ -6,7 +6,7 @@ import argparse
 import utils
 
 from student_utils import *
-from algorithms.ilp import *
+#from algorithms.ilp import *
 from algorithms.reduction import *
 
 
@@ -31,8 +31,11 @@ def solve(num_of_locations, num_houses, list_of_locations, list_of_houses, start
         if params[0] == "Ant":
             car_path, drop_off = r.Ant_Colony_solve()
             return car_path, drop_off
-        else: # 2-Opt TSP Solver: Default
+        else:
             car_path, drop_off, best_k, best_s = r.Two_Opt_solve()
+            # Write best_k and best_s to a file
+            with open('best_k_and_s.txt', 'a+') as f:
+                f.write('%s %s \n' % (best_k, best_s))
             return car_path, drop_off
 
 """
@@ -74,14 +77,9 @@ def solve_from_file(input_file, output_directory, params=[]):
 
 def solve_all(input_directory, output_directory, params=[]):
     input_files = utils.get_files_with_extension(input_directory, 'in')
-
     for input_file in input_files:
         solve_from_file(input_file, output_directory, params=params)
-
-    # with open('file_name', 'w') as f:
-    # for tuple in tuples:
-    #     f.write('%s %s %s\n' % tuple)
-
+    
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description='Parsing arguments')
