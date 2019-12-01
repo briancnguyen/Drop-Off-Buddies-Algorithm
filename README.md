@@ -9,8 +9,8 @@ Brian, Akash, and their friends are chilling at Brian's home late at night. Bria
 python solver.py --all `directory_to_inputs` `directory_to_outputs` `algorithm` `input_file_size`
 
 ### Argument Values
-algorithm = ILP, Ant, TwoOpt
-input_file_size = 50, 100, 200, all
+- algorithm = ILP, Ant, TwoOpt <br>
+- input_file_size = 50, 100, 200, all
 
 ### Example
 `python solver.py --all inputs outputs_two_opt TwoOpt 200`
