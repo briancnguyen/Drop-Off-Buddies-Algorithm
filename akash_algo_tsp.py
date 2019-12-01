@@ -13,8 +13,8 @@ class TwoOpt:
     def __init__(self, num_of_locations, num_houses, list_of_locations, list_of_houses, starting_car_location, adjacency_matrix):
         self.number_of_locations = num_of_locations
         self.number_of_homes = num_houses
-        self.list_of_locations = list_of_locations 
-        self.list_of_houses = list_of_houses 
+        self.list_of_locations = list_of_locations
+        self.list_of_houses = list_of_houses
         self.starting_car_location = starting_car_location
         self.adjacency_matrix = adjacency_matrix
         self.G, _ = adjacency_matrix_to_graph(self.adjacency_matrix)
@@ -57,7 +57,7 @@ class TwoOpt:
                     dist = self.distance(node_1, node_2)
                     G_prime.add_edge(node_1, node_2, weight=dist)
         return G_prime
-    
+
     # Creates list of cluster_centers, these are where we drop drop_off
     # also does pruning to remove useless clusters
     def get_clusters_and_dropoff(self, clusters_dict):

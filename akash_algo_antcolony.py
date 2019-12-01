@@ -119,6 +119,3 @@ def solve_antcolony(file,k,s):
 
     #return best_rao_tour, best_drop_off
     print(best_cost)
-k = 3
-s= 2
-solve_antcolony('inputs/2_200.in',k,s)
