@@ -12,6 +12,7 @@ def solve_antcolony(file):
     num_loc, num_houses, list_loc, list_houses, start, adj_matrix, G, location_indices, house_indices, start_index = get_input_data(file)
 
     F_W_dict = nx.floyd_warshall(G)
+
     def faster_cost_soln(rao_tour, drop_off):
         rao_cost = 0
         walk_cost = 0
@@ -89,8 +90,8 @@ def solve_antcolony(file):
     best_drop_off = {}
     # k is the number of nearest neighbors around a node to consider
     # s is the number of shared neighbors between u and v for them to be put into 1 cluster
-    k_max = 15
-    s_max = 8
+    k_max = 5
+    s_max = 4
     if(num_loc <= 75):
         k_max = num_loc
         s_max = num_houses
@@ -114,13 +115,14 @@ def solve_antcolony(file):
                     best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost,best_rao_tour,best_drop_off,
                     cost,rao_tour,cluster_center_drop_off)
 
+                else:
                     if(not soda_drop_flag):
                         soda_drop_flag = True
                         rao_tour = [start_index]
                         cost = faster_cost_soln(rao_tour,cluster_center_drop_off)
                         best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost, best_rao_tour, best_drop_off,
                         cost, rao_tour, cluster_center_drop_off)
-
+                        print()
             # except ZeroDivisionError:
             #     continue
             except ValueError:

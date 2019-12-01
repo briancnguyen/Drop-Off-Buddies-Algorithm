@@ -18,9 +18,12 @@ def solve_tsp(file):
         walk_cost = 0
         for i in range(len(rao_tour)-1):
             rao_cost += F_W_dict[rao_tour[i]][rao_tour[i+1]]
+
         for key in drop_off:
             for target in drop_off[key]:
-                walk_cost += F_W_dict[key][target]
+                length = F_W_dict[key][target]
+                walk_cost += length
+
         return (2/3)*rao_cost + walk_cost
 
     def distance(node_1, node_2):
@@ -114,15 +117,14 @@ def solve_tsp(file):
                     rao_tour, cost = tsp_solver_1(G_prime,G_prime_nodes, start_index, cluster_center_drop_off)
                     print("** Computed TSP Tour **")
                     best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost,best_rao_tour,best_drop_off,
-                    cost,rao_tour,cluster_center_drop_off)
-
-                    useless_count += 1
+                                                                            cost,rao_tour,cluster_center_drop_off)
+                else:
                     if(not soda_drop_flag):
                         soda_drop_flag = True
                         rao_tour = [start_index]
                         cost = faster_cost_soln(rao_tour,cluster_center_drop_off)
                         best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost, best_rao_tour, best_drop_off,
-                        cost, rao_tour, cluster_center_drop_off)
+                                                                                cost, rao_tour, cluster_center_drop_off)
 
 
             # except ZeroDivisionError:
