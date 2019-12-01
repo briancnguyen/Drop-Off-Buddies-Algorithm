@@ -10,16 +10,20 @@ def compute_tour_paths(G, tour):
             rao_tour.append(node)
     return rao_tour
 
-def compare_cost(best_cost, best_tour, best_drop_off, curr_cost, curr_tour, curr_drop_off):
+def compare_cost(best_cost, best_tour, best_drop_off, best_k, best_s, curr_cost, curr_tour, curr_drop_off,k , s):
     #Comparing Best Solution
     ret_cost = best_cost
     ret_tour = best_tour
     ret_drop = best_drop_off
+    ret_k = best_k
+    ret_s = best_s
     if(curr_cost < best_cost):
         ret_cost = curr_cost
         ret_tour = curr_tour
         ret_drop = curr_drop_off
-    return ret_cost, ret_tour, ret_drop
+        ret_k = k
+        ret_s = s
+    return ret_cost, ret_tour, ret_drop, ret_k , ret_s
 
 def shortest_path(G, node_1, node_2):
     try:
