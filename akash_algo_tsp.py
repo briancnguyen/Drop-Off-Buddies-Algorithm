@@ -96,37 +96,39 @@ def solve_tsp(file):
     k_max = num_loc
     s_max = min(30,num_houses/2)
     soda_drop_flag = False
+    useless_count = 0
     for k in range(1,k_max):
         for s in range(1,s_max):
             try:
-                print("--------")
-                print("k=" + str(k) + " k_max=" + str(k_max) + " | " + " s=" + str(s) + " s_max=" + str(s_max))
-                clusters_dict = jp(k, s)
-                cluster_centers, cluster_center_drop_off = get_clusters_and_dropoff(clusters_dict)
-                if(len(cluster_center_drop_off) > 1):
-                    useless_count = 0
-                    #G_prime is the graph of clusters
-                    G_prime = make_G_prime(cluster_centers)
-                    G_prime_nodes = {i : cluster_centers[i] for i in range(len(cluster_centers))}
-                    print("Made Graph G_prime")
-                    #Ant colony technique
-                    rao_tour, cost = tsp_solver_1(G_prime,G_prime_nodes, start_index, cluster_center_drop_off)
-                    print("** Computed TSP Tour **")
-                    best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost,best_rao_tour,best_drop_off,
-                                                                            cost,rao_tour,cluster_center_drop_off)
-                else:
-                    if(not soda_drop_flag):
-                        soda_drop_flag = True
-                        rao_tour = [start_index]
-                        cost = faster_cost_soln(rao_tour,cluster_center_drop_off)
-                        best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost, best_rao_tour, best_drop_off,
-                                                                                cost, rao_tour, cluster_center_drop_off)
+                if(useless_count < int(num_loc/4)):
+                    print("--------")
+                    print("k=" + str(k) + " k_max=" + str(k_max) + " | " + " s=" + str(s) + " s_max=" + str(s_max))
+                    clusters_dict = jp(k, s)
+                    cluster_centers, cluster_center_drop_off = get_clusters_and_dropoff(clusters_dict)
+                    if(len(cluster_center_drop_off) > 1):
+                        useless_count = 0
+                        #G_prime is the graph of clusters
+                        G_prime = make_G_prime(cluster_centers)
+                        G_prime_nodes = {i : cluster_centers[i] for i in range(len(cluster_centers))}
+                        print("Made Graph G_prime")
+                        #Ant colony technique
+                        rao_tour, cost = tsp_solver_1(G_prime,G_prime_nodes, start_index, cluster_center_drop_off)
+                        print("** Computed TSP Tour **")
+                        best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost,best_rao_tour,best_drop_off,
+                                                                                cost,rao_tour,cluster_center_drop_off)
+                    else:
+                        useless_count += 1
+                        if(not soda_drop_flag):
+                            soda_drop_flag = True
+                            rao_tour = [start_index]
+                            cost = faster_cost_soln(rao_tour,cluster_center_drop_off)
+                            best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost, best_rao_tour, best_drop_off,
+                                                                                    cost, rao_tour, cluster_center_drop_off)
 
 
             # except ZeroDivisionError:
             #     continue
             except ValueError:
-                s_max = s
                 continue
             # except OverflowError:
             #     continue
