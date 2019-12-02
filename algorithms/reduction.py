@@ -80,7 +80,7 @@ class Reduction:
     def Two_Opt_solver(self, G_prime, G_prime_nodes, start_index, cluster_center_drop_off):
         tsp = TSP()
         tsp.read_mat(nx.adjacency_matrix(G_prime).todense())
-        two_opt = TwoOpt_solver(initial_tour='NN', iter_num=100)
+        two_opt = TwoOpt_solver(initial_tour='NN', iter_num=20)
         best_tour = tsp.get_approx_solution(two_opt)
         center_tour = [G_prime_nodes[node] for node in best_tour]
         if(center_tour.count(start_index) == 1):
@@ -100,14 +100,19 @@ class Reduction:
         best_s = 0
         # k is the number of nearest neighbors around a node to consider
         # s is the number of shared neighbors between u and v for them to be put into 1 cluster
-        k_max = int(self.number_of_locations/2)
-        s_max = min(20, int(self.number_of_homes/2))
+        k_max = min(25,self.number_of_locations/2)
+        k_range = range(1,k_max,3)
+        s_max = min(15, int(self.number_of_homes/2))
+        s_range = range(1,s_max,3)
+        if(self.number_of_locations <= 100):
+            k_range = range(1,50)
+            s_max = range(1,20)
         soda_drop_flag = False
         useless_count = 0
-        for k in range(1, k_max):
-            for s in range(1, s_max):
+        for k in k_range:
+            for s in s_range:
                 try:
-                    if (useless_count < 2*s_max):
+                    if (useless_count < 35):
                         print("--------")
                         print("k=" + str(k) + " k_max=" + str(k_max) + " | " + " s=" + str(s) + " s_max=" + str(s_max))
                         clusters_dict = self.JP(k, s)
@@ -134,6 +139,7 @@ class Reduction:
                 # except ZeroDivisionError:
                 #     continue
                 except ValueError:
+                    s_max = s
                     continue
                 # except OverflowError:
                 #     continue
