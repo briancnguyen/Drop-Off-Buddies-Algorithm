@@ -77,10 +77,10 @@ class Reduction:
                     center_drop_off[center] = drop_off
         return centers, center_drop_off
 
-    def Two_Opt_solver(self, G_prime, G_prime_nodes, start_index, cluster_center_drop_off):
+    def Two_Opt_solver(self, G_prime, G_prime_nodes, start_index, cluster_center_drop_off, num_iterations):
         tsp = TSP()
         tsp.read_mat(nx.adjacency_matrix(G_prime).todense())
-        two_opt = TwoOpt_solver(initial_tour='NN', iter_num=500)
+        two_opt = TwoOpt_solver(initial_tour='NN', iter_num=num_iterations)
         best_tour = tsp.get_approx_solution(two_opt)
         center_tour = [G_prime_nodes[node] for node in best_tour]
         if(center_tour.count(start_index) == 1):
@@ -92,7 +92,7 @@ class Reduction:
         cost_1 = self.faster_cost_solution(rao_tour_1, cluster_center_drop_off)
         return rao_tour_1, cost_1
 
-    def Two_Opt_solve(self):
+    def Two_Opt_solve(self, num_iterations=500):
         best_cost = 10e1000
         best_rao_tour = []
         best_drop_off = {}
@@ -124,7 +124,7 @@ class Reduction:
                             G_prime_nodes = {i : cluster_centers[i] for i in range(len(cluster_centers))}
                             print("Made Graph G_prime")
                             # 2-OPT TSP Solver
-                            rao_tour, cost = self.Two_Opt_solver(G_prime, G_prime_nodes, self.start_index, cluster_center_drop_off)
+                            rao_tour, cost = self.Two_Opt_solver(G_prime, G_prime_nodes, self.start_index, cluster_center_drop_off, num_iterations)
                             print("** Computed TSP Tour **")
                             best_cost, best_rao_tour, best_drop_off,best_k,best_s = compare_cost(best_cost, best_rao_tour, best_drop_off,best_k,best_s,
                                                                                 cost, rao_tour, cluster_center_drop_off,k,s)
