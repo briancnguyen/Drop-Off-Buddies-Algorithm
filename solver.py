@@ -22,9 +22,6 @@ def solve(input_file, num_of_locations, num_houses, list_of_locations, list_of_h
         A dictionary mapping drop-off location to a list of homes of TAs that got off at that particular location
         NOTE: both outputs should be in terms of indices not the names of the locations themselves
     """
-    if params[1] != "all" and params[1] not in input_file:
-        return None, None
-
     if params[0] == "ILP":
         ilp = ILP(num_of_locations, num_houses, list_of_locations, list_of_houses, starting_car_location, adjacency_matrix)
         car_path, drop_off = ilp.solve()
@@ -37,9 +34,9 @@ def solve(input_file, num_of_locations, num_houses, list_of_locations, list_of_h
                 f.write('%s %s %s %s \n' % (best_k, best_s, best_cost, input_file))
             return car_path, drop_off
         else:
-            car_path, drop_off, best_k, best_s, best_cost = r.Two_Opt_solve()
+            car_path, drop_off, best_k, best_s, best_cost = r.Two_Opt_solve(int(params[2]))
             # Write best_k and best_s to a file
-            with open('best_tsp_' + str(params[1]) + '.txt', 'a+') as f:
+            with open('best_tsp_' + str(params[1]) + '_iter' + str(params[2]) + '.txt', 'a+') as f:
                 f.write('%s %s %s %s \n' % (best_k, best_s, best_cost, input_file))
             return car_path, drop_off
 
@@ -66,6 +63,10 @@ def convertToFile(path, dropoff_mapping, path_to_file, list_locs):
     utils.write_to_file(path_to_file, string)
 
 def solve_from_file(input_file, output_directory, params=[]):
+    if params[1] != "all" and params[1] not in input_file:
+        print('Skipping', input_file)
+        return
+
     print('Processing', input_file)
 
     input_data = utils.read_file(input_file)
