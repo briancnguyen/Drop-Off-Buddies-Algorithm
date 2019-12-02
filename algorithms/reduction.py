@@ -80,7 +80,7 @@ class Reduction:
     def Two_Opt_solver(self, G_prime, G_prime_nodes, start_index, cluster_center_drop_off):
         tsp = TSP()
         tsp.read_mat(nx.adjacency_matrix(G_prime).todense())
-        two_opt = TwoOpt_solver(initial_tour='NN', iter_num=20)
+        two_opt = TwoOpt_solver(initial_tour='NN', iter_num=500)
         best_tour = tsp.get_approx_solution(two_opt)
         center_tour = [G_prime_nodes[node] for node in best_tour]
         if(center_tour.count(start_index) == 1):
@@ -144,7 +144,7 @@ class Reduction:
                 # except OverflowError:
                 #     continue
         print("BEST COST: " + str(best_cost))
-        return best_rao_tour, best_drop_off, best_k, best_s
+        return best_rao_tour, best_drop_off, best_k, best_s, best_cost
 
     # Used http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.96.6751&rep=rep1&type=pdf for ant colony hyperparam
     def Ant_Colony_solver(self, G_prime, start_index, cluster_center_drop_off):
@@ -167,33 +167,52 @@ class Reduction:
     def Ant_Colony_solve(self, k=5, s=4):
         best_cost = 10e1000
         best_rao_tour = []
+        best_k = 0
+        best_s = 0
         best_drop_off = {}
+        soda_drop_flag = False
         # k is the number of nearest neighbors around a node to consider
-        try:
-            clusters_dict = self.JP(k, s)
-            cluster_centers, cluster_center_drop_off = self.get_clusters_and_dropoff(clusters_dict)
-            print("Clusters found")
-            if(len(cluster_center_drop_off) > 1):
-                useless_count = 0
-                # G_prime is the graph of clusters
-                G_prime = self.make_G_prime(cluster_centers)
-                print("Made Graph G_prime")
-                # Ant Colony Technique
-                rao_tour, cost = self.Ant_Colony_solver(G_prime, self.start_index, cluster_center_drop_off)
-                print("** Computed Ant Colony Tour **")
-                best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost,best_rao_tour,best_drop_off,k,s,
-                cost,rao_tour,cluster_center_drop_off,k,s)
-            else:
-                soda_drop_flag = True
-                rao_tour = [self.start_index]
-                cost = self.faster_cost_solution(rao_tour, cluster_center_drop_off)
-                best_cost, best_rao_tour, best_drop_off = compare_cost(best_cost, best_rao_tour, best_drop_off,k,s,
-                cost, rao_tour, cluster_center_drop_off,k,s)
-                    # except ZeroDivisionError:
-                    #     continue
-        except ValueError:
-            print("VAL ERROR")
-                    # except OverflowError:
-                    #     continue
-        print(best_cost)
-        return best_rao_tour, best_drop_off
+        k_max = min(25,int(self.number_of_locations/2))
+        k_range = range(1,k_max,3)
+        s_max = min(15, int(self.number_of_homes/2))
+        s_range = range(1,s_max,3)
+
+        if self.number_of_locations <= 100:
+            k_range = range(1, self.number_of_locations)
+            s_range = range(1, 20)
+
+        for k in range(1, 50):
+            for s in range(1, 20):
+                try:
+                    clusters_dict = self.JP(k, s)
+                    cluster_centers, cluster_center_drop_off = self.get_clusters_and_dropoff(clusters_dict)
+                    print("Clusters found")
+                    if(len(cluster_center_drop_off) > 1):
+                        useless_count = 0
+                        # G_prime is the graph of clusters
+                        G_prime = self.make_G_prime(cluster_centers)
+                        print("Made Graph G_prime")
+                        # Ant Colony Technique
+                        rao_tour, cost = self.Ant_Colony_solver(G_prime, self.start_index, cluster_center_drop_off)
+                        print("COST: " + str(cost))
+                        print("BEST COST: " + str(best_cost))
+                        print("** Computed Ant Colony Tour **")
+                        best_cost, best_rao_tour, best_drop_off, best_k, best_s = compare_cost(best_cost,best_rao_tour,best_drop_off,k,s,
+                                                                    cost,rao_tour,cluster_center_drop_off,k,s)
+                    else:
+                        if not soda_drop_flag:
+                            
+                            soda_drop_flag = True
+                            rao_tour = [self.start_index]
+                            cost = self.faster_cost_solution(rao_tour, cluster_center_drop_off)
+                            best_cost, best_rao_tour, best_drop_off,best_k, best_s = compare_cost(best_cost, best_rao_tour, best_drop_off,k,s,
+                                                                             cost, rao_tour, cluster_center_drop_off,k,s)
+                            # except ZeroDivisionError:
+                            #     continue
+                except ValueError:
+                    # print("VAL ERROR")
+                    continue
+                            # except OverflowError:
+                            #     continue
+        print("Best Cost", best_cost)
+        return best_rao_tour, best_drop_off, best_k, best_s, best_cost
