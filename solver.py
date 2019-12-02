@@ -24,7 +24,7 @@ def solve(input_file, num_of_locations, num_houses, list_of_locations, list_of_h
     """
     if params[1] != "all" and params[1] not in input_file:
         return None, None
-        
+
     if params[0] == "ILP":
         ilp = ILP(num_of_locations, num_houses, list_of_locations, list_of_houses, starting_car_location, adjacency_matrix)
         car_path, drop_off = ilp.solve()
@@ -38,7 +38,7 @@ def solve(input_file, num_of_locations, num_houses, list_of_locations, list_of_h
             car_path, drop_off, best_k, best_s = r.Two_Opt_solve()
             # Write best_k and best_s to a file
             with open('best_k_and_s.txt', 'a+') as f:
-                f.write('%s %s \n' % (best_k, best_s))
+                f.write('%s %s %s \n' % (best_k, best_s, input_file))
             return car_path, drop_off
 
 """
