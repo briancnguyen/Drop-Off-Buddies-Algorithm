@@ -28,12 +28,12 @@ def solve(input_file, num_of_locations, num_houses, list_of_locations, list_of_h
         return car_path, drop_off
     else:
         r = Reduction(num_of_locations, num_houses, list_of_locations, list_of_houses, starting_car_location, adjacency_matrix)
-        if params[0] == "Ant":
+        if params[0] == "ANT":
             car_path, drop_off,  best_k, best_s, best_cost = r.Ant_Colony_solve()
             with open('best_ant_' + str(params[1]) + '.txt', 'a+') as f:
                 f.write('%s %s %s %s \n' % (best_k, best_s, best_cost, input_file))
             return car_path, drop_off
-        else:
+        elif params[0] == "TSP":
             car_path, drop_off, best_k, best_s, best_cost = r.Two_Opt_solve()
             # Write best_k and best_s to a file
             with open('best_tsp_' + str(params[1]) + '.txt', 'a+') as f:
@@ -63,7 +63,7 @@ def convertToFile(path, dropoff_mapping, path_to_file, list_locs):
     utils.write_to_file(path_to_file, string)
 
 def solve_from_file(input_file, output_directory, params=[]):
-    if params[1] != "all" and params[1] not in input_file:
+    if params[1] != "ALL" and params[1] not in input_file:
         print('Skipping', input_file)
         return
 
@@ -82,6 +82,9 @@ def solve_from_file(input_file, output_directory, params=[]):
 
 
 def solve_all(input_directory, output_directory, params=[]):
+    if params[0] != "ILP" and params[0] != "ANT" and params[0] != "TSP":
+        print('Invalid algorithm. Please use one of the following algorithms: ILP, ANT, TSP.')
+        return 
     input_files = utils.get_files_with_extension(input_directory, 'in')
     for input_file in input_files:
         solve_from_file(input_file, output_directory, params=params)

@@ -10,9 +10,9 @@ Brian, Akash, and their buddies are chilling at Brian's home late at night. Bria
 - python3 solver.py --all `directory_to_inputs` `directory_to_outputs` `algorithm` `input_file_size`
 
 ### Argument Values
-- algorithm = ILP, Ant, TwoOpt
-- input_file_size = 50, 100, 200, all
+- algorithm = ILP, ANT, TSP
+- input_file_size = 50, 100, 200, ALL
 
 ### Example
-- `python3 solver.py inputs/text.in outputs TwoOpt 200`
-- `python3 solver.py --all inputs outputs TwoOpt 200`
+- `python3 solver.py inputs/text.in outputs TSP 200`
+- `python3 solver.py --all inputs outputs TSP 200`
