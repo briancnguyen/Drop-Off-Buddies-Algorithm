@@ -85,7 +85,7 @@ def solve_all(input_directory, output_directory, params=[]):
     input_files = utils.get_files_with_extension(input_directory, 'in')
     for input_file in input_files:
         solve_from_file(input_file, output_directory, params=params)
-    
+
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description='Parsing arguments')

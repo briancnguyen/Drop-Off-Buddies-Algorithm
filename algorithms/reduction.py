@@ -177,12 +177,15 @@ class Reduction:
         s_max = min(15, int(self.number_of_homes/2))
         s_range = range(1,s_max,3)
 
-        if self.number_of_locations <= 100:
+        if self.number_of_locations <= 50:
             k_range = range(1, self.number_of_locations)
             s_range = range(1, 20)
+        elif self.number_of_locations > 50 and self.number_of_locations <= 100:
+            k_range = range(1, 50,2)
+            s_range = range(1,15,2)
 
-        for k in range(1, 50):
-            for s in range(1, 20):
+        for k in k_range:
+            for s in s_range:
                 try:
                     clusters_dict = self.JP(k, s)
                     cluster_centers, cluster_center_drop_off = self.get_clusters_and_dropoff(clusters_dict)
@@ -195,7 +198,6 @@ class Reduction:
                         # Ant Colony Technique
                         rao_tour, cost = self.Ant_Colony_solver(G_prime, self.start_index, cluster_center_drop_off)
                         print("COST: " + str(cost))
-                        print("BEST COST: " + str(best_cost))
                         print("** Computed Ant Colony Tour **")
                         best_cost, best_rao_tour, best_drop_off, best_k, best_s = compare_cost(best_cost,best_rao_tour,best_drop_off,k,s,
                                                                     cost,rao_tour,cluster_center_drop_off,k,s)
