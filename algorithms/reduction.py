@@ -145,6 +145,8 @@ class Reduction:
                 # except OverflowError:
                 #     continue
         print("BEST COST: " + str(best_cost))
+        if(best_drop_off[self.start_index]==[]):
+            del best_drop_off[self.start_index]
         return best_rao_tour, best_drop_off, best_k, best_s, best_cost
 
     # Used http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.96.6751&rep=rep1&type=pdf for ant colony hyperparam
@@ -200,6 +202,8 @@ class Reduction:
                         rao_tour, cost = self.Ant_Colony_solver(G_prime, self.start_index, cluster_center_drop_off)
                         print("COST: " + str(cost))
                         print("** Computed Ant Colony Tour **")
+                        if(cluster_center_drop_off[self.start_index] == []):
+                            print(cluster_center_drop_off)
                         best_cost, best_rao_tour, best_drop_off, best_k, best_s = compare_cost(best_cost,best_rao_tour,best_drop_off,k,s,
                                                                     cost,rao_tour,cluster_center_drop_off,k,s)
                     else:
@@ -218,4 +222,6 @@ class Reduction:
                             # except OverflowError:
                             #     continue
         print("Best Cost", best_cost)
+        if(best_drop_off[self.start_index]==[]):
+            del best_drop_off[self.start_index]
         return best_rao_tour, best_drop_off, best_k, best_s, best_cost
