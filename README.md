@@ -15,5 +15,5 @@ Brian, Akash, and their buddies are chilling at Brian's home late at night. Bria
 - num_iters_TwoOpt = 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000
 
 ### Example
-`python3 solver.py inputs/text.in outputs_two_opt TwoOpt 200 100`
-`python3 solver.py --all inputs outputs_two_opt TwoOpt 200 100`
+- `python3 solver.py inputs/text.in outputs_two_opt TwoOpt 200 100`
+- `python3 solver.py --all inputs outputs_two_opt TwoOpt 200 100`
