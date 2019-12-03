@@ -34,9 +34,9 @@ def solve(input_file, num_of_locations, num_houses, list_of_locations, list_of_h
                 f.write('%s %s %s %s \n' % (best_k, best_s, best_cost, input_file))
             return car_path, drop_off
         else:
-            car_path, drop_off, best_k, best_s, best_cost = r.Two_Opt_solve(int(params[2]))
+            car_path, drop_off, best_k, best_s, best_cost = r.Two_Opt_solve()
             # Write best_k and best_s to a file
-            with open('best_tsp_' + str(params[1]) + '_iter' + str(params[2]) + '.txt', 'a+') as f:
+            with open('best_tsp_' + str(params[1]) + '.txt', 'a+') as f:
                 f.write('%s %s %s %s \n' % (best_k, best_s, best_cost, input_file))
             return car_path, drop_off
 

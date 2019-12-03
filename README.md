@@ -6,14 +6,13 @@ Brian, Akash, and their buddies are chilling at Brian's home late at night. Bria
 ## Output Commands
 
 ### Command Layout
-- python3 solver.py `path_to_input_file` `directory_to_outputs` `algorithm` `input_file_size` `num_iters_TwoOpt`
-- python3 solver.py --all `directory_to_inputs` `directory_to_outputs` `algorithm` `input_file_size` `num_iters_TwoOpt`
+- python3 solver.py `path_to_input_file` `directory_to_outputs` `algorithm` `input_file_size`
+- python3 solver.py --all `directory_to_inputs` `directory_to_outputs` `algorithm` `input_file_size`
 
 ### Argument Values
 - algorithm = ILP, Ant, TwoOpt
 - input_file_size = 50, 100, 200, all
-- num_iters_TwoOpt = 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000
 
 ### Example
-- `python3 solver.py inputs/text.in outputs_two_opt TwoOpt 200 100`
-- `python3 solver.py --all inputs outputs_two_opt TwoOpt 200 100`
+- `python3 solver.py inputs/text.in outputs TwoOpt 200`
+- `python3 solver.py --all inputs outputs TwoOpt 200`
