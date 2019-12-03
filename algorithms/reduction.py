@@ -100,7 +100,7 @@ class Reduction:
         best_s = 0
         # k is the number of nearest neighbors around a node to consider
         # s is the number of shared neighbors between u and v for them to be put into 1 cluster
-        k_max = min(30,int(self.number_of_locations/2))
+        k_max = min(30,max(20,int(self.number_of_locations/2)))
         k_range = range(1,k_max)
         s_max = min(15, max(10,int(self.number_of_homes/2)))
         s_range = range(1,s_max)
@@ -173,9 +173,9 @@ class Reduction:
         best_drop_off = {}
         soda_drop_flag = False
         # k is the number of nearest neighbors around a node to consider
-        k_max = min(25,int(self.number_of_locations/2))
+        k_max = min(25,max(20,int(self.number_of_locations/2)))
         k_range = range(1,k_max,3)
-        s_max = min(15, int(self.number_of_homes/2))
+        s_max = min(15, max(10,int(self.number_of_homes/2)))
         s_range = range(1,s_max,3)
 
         if self.number_of_locations <= 50:
