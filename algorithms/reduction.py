@@ -102,13 +102,14 @@ class Reduction:
         # s is the number of shared neighbors between u and v for them to be put into 1 cluster
         k_max = min(30,int(self.number_of_locations/2))
         k_range = range(1,k_max)
-        s_max = min(15, int(self.number_of_homes/2))
+        s_max = min(15, max(10,int(self.number_of_homes/2)))
         s_range = range(1,s_max)
         if(self.number_of_locations <= 100):
             k_range = range(1,self.number_of_locations)
             s_max = range(1,20)
         soda_drop_flag = False
         useless_count = 0
+        print(k_range)
         for k in k_range:
             for s in s_range:
                 try:
@@ -205,7 +206,7 @@ class Reduction:
                         if not soda_drop_flag:
 
                             soda_drop_flag = True
-                            rao_tour = [self.start_index]
+                            rao_tour = [self.list_of_locations[self.start_index]]
                             cost = self.faster_cost_solution(rao_tour, cluster_center_drop_off)
                             best_cost, best_rao_tour, best_drop_off,best_k, best_s = compare_cost(best_cost, best_rao_tour, best_drop_off,k,s,
                                                                              cost, rao_tour, cluster_center_drop_off,k,s)
