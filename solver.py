@@ -63,7 +63,7 @@ def convertToFile(path, dropoff_mapping, path_to_file, list_locs):
     utils.write_to_file(path_to_file, string)
 
 def solve_from_file(input_file, output_directory, params=[]):
-    if params[1] != "ALL" and params[1] not in input_file:
+    if params[1] != "ALL" and '_'+ str(params[1]) not in input_file:
         print('Skipping', input_file)
         return
 
