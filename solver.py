@@ -55,7 +55,6 @@ def convertToFile(path, dropoff_mapping, path_to_file, list_locs):
     string += str(dropoffNumber) + '\n'
     for dropoff in dropoff_mapping.keys():
         strDrop = list_locs[dropoff] + ' '
-        print(type(dropoff_mapping[dropoff][0]))
         for node in dropoff_mapping[dropoff]:
             strDrop += list_locs[node] + ' '
         strDrop = strDrop.strip()
