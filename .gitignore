@@ -117,3 +117,6 @@ dmypy.json
 
 # Python Config
 *.cfg
+
+# MACOS
+.DS_STORE
