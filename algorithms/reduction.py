@@ -184,7 +184,7 @@ class Reduction:
             k_range = range(1, self.number_of_locations)
             s_range = range(1, 20)
         elif self.number_of_locations > 50 and self.number_of_locations <= 200:
-            k_range = range(1, 50,2)
+            k_range = range(1, 35,3)
             s_range = range(1,15,2)
 
         for k in k_range:
