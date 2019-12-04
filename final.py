@@ -1,8 +1,18 @@
 from solver import solve_all
+import pandas as pd
+import numpy as np
 import argparse
 import os
 import sys
 import shutil
+
+def output_data(file, algorithm):
+    data = pd.read_csv(file, sep=" ", header=None, error_bad_lines=False)
+    if data.shape[1] == 5:
+        data.drop(data.columns[len(data.columns) - 1], axis=1, inplace=True)
+    data.columns = ["k", "s", "cost", "file"]
+    data['algorithm'] = algorithm
+    return data
 
 def copy_outputs(df, output_dir_old, output_dir_new):
     if not os.path.exists(output_dir_new):
@@ -32,11 +42,11 @@ def final(output_directory):
     # solve_all('inputs', 'outputs_tsp_200', ['TSP', '200'])
     merge_best_outputs('best_ant_50.txt', 'best_tsp_50.txt', 'outputs_ant_50/', 'outputs_tsp_50/', output_directory)
     merge_best_outputs('best_ant_100.txt', 'best_tsp_100.txt', 'outputs_ant_100/', 'outputs_tsp_100/', output_directory)
-    merge_best_outputs(None, 'best_tsp_200.txt', None, 'outputs_tsp_200/', output_directory)
+    # merge_best_outputs(None, 'best_tsp_200.txt', None, 'outputs_tsp_200/', output_directory)
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description='Parsing arguments')
-    parser.add_argument('input', type=str, help='The path to the input file or directory')
+    # parser.add_argument('input', type=str, help='The path to the input file or directory')
     parser.add_argument('output_directory', type=str, nargs='?', default='outputs', help='The path to the directory where the output should be written')
     args = parser.parse_args()
     output_directory = args.output_directory
