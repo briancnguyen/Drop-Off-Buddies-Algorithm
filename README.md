@@ -3,7 +3,9 @@
 ## Problem Statement
 Brian, Akash, and their buddies are chilling at Brian's home late at night. Brian offers to drive and drop his buddies off closer to their homes so that they can get back home safe. Since the roads are long in his area, Brian would also like to get back home as soon as as he can. Can you plan transportation so that everyone can get home as efficiently as possible?
 
-## Terminal Commands
+## Shortcut Command
+### Command Layout
+- python3 final.py `directory_to_inputs` `directory_to_outputs`
 
 ### Command Layout
 - python3 solver.py `path_to_input_file` `directory_to_outputs` `algorithm` `input_file_size`
