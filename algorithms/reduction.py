@@ -210,7 +210,8 @@ class Reduction:
                         if not soda_drop_flag:
 
                             soda_drop_flag = True
-                            rao_tour = [self.list_of_locations[self.start_index]]
+                            # rao_tour = [self.list_of_locations[self.start_index]]
+                            rao_tour = [self.start_index]
                             cost = self.faster_cost_solution(rao_tour, cluster_center_drop_off)
                             best_cost, best_rao_tour, best_drop_off,best_k, best_s = compare_cost(best_cost, best_rao_tour, best_drop_off,k,s,
                                                                              cost, rao_tour, cluster_center_drop_off,k,s)
@@ -222,6 +223,8 @@ class Reduction:
                             # except OverflowError:
                             #     continue
         print("Best Cost", best_cost)
+        print("Best Drop-Off", best_drop_off)
+        print("Best Rao Tour", best_rao_tour)
         if(best_drop_off[self.start_index]==[]):
             del best_drop_off[self.start_index]
         return best_rao_tour, best_drop_off, best_k, best_s, best_cost
