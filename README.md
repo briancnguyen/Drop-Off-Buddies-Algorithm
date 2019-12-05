@@ -5,7 +5,7 @@ Brian, Akash, and their buddies are chilling at Brian's home late at night. Bria
 
 ## Shortcut Commands
 ### Command Layout
-- python3 final.py `directory_to_inputs` `directory_to_outputs`
+- python3 shortcut.py `directory_to_inputs` `directory_to_outputs`
 
 ## Solver Commands
 ### Command Layout
