@@ -35,6 +35,7 @@ def merge_best_outputs(ant_file, tsp_file, ant_out_dir, tsp_out_dir, final_out_d
         copy_outputs(tsp_data, tsp_out_dir, final_out_dir)
 
 def generate_outputs(input_directory, output_directory):
+    print("Input:", input_directory, "Output:", output_directory)
     # solve_all(input_directory, 'outputs_ant_50', ['ANT', '50'])
     # solve_all(input_directory, 'outputs_tsp_50', ['TSP', '50'])
     # solve_all(input_directory, 'outputs_ant_100', ['ANT', '100'])
