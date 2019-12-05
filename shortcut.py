@@ -1,4 +1,4 @@
-from solver import solve_all
+from solver import solve_all, solve_from_file
 import pandas as pd
 import numpy as np
 import argparse
@@ -34,6 +34,20 @@ def merge_best_outputs(ant_file, tsp_file, ant_out_dir, tsp_out_dir, final_out_d
         tsp_data = output_data(tsp_file, 'tsp')
         copy_outputs(tsp_data, tsp_out_dir, final_out_dir)
 
+def solve_missing_files(input_dir, output_dir, file_size, algorithm):
+    inputs = set(os.listdir(input_dir))
+    outputs = set(os.listdir(output_dir))
+    missing_outputs = []
+    for filename in inputs:
+        file = filename.split(".")[0]
+        if '_' + str(file_size) in file and file + '.out' not in outputs:
+            missing_outputs.append(filename)
+    missing = 0
+    for missing_input_file in missing_outputs:   
+        solve_from_file(input_dir + '/' + missing_input_file, output_dir, params=[algorithm, str(file_size)])
+        missing += 1
+    return missing
+
 def generate_outputs(input_directory, output_directory):
     print("Input:", input_directory, "Output:", output_directory)
     # solve_all(input_directory, 'outputs_ant_50', ['ANT', '50'])
@@ -41,9 +55,16 @@ def generate_outputs(input_directory, output_directory):
     # solve_all(input_directory, 'outputs_ant_100', ['ANT', '100'])
     # solve_all(input_directory, 'outputs_tsp_100', ['TSP', '100'])
     # solve_all(input_directory, 'outputs_tsp_200', ['TSP', '200'])
+    solve_missing_files(input_directory, 'outputs_ant_50', 50, "ANT")
+    solve_missing_files(input_directory, 'outputs_tsp_50', 50, "TSP")
+    solve_missing_files(input_directory, 'outputs_ant_100', 100, "ANT")
+    solve_missing_files(input_directory, 'outputs_tsp_100', 100, "TSP")
+    solve_missing_files(input_directory, 'outputs_tsp_200', 200, "TSP")
+    # solve_from_file(input_directory + '/' + '16_200.in', 'outputs_tsp_200', params=["TSP", str(200)])
+    # solve_from_file(input_directory + '/' + '37_200.in', 'outputs_tsp_200', params=["TSP", str(200)])
     merge_best_outputs('best_ant_50.txt', 'best_tsp_50.txt', 'outputs_ant_50/', 'outputs_tsp_50/', output_directory)
     merge_best_outputs('best_ant_100.txt', 'best_tsp_100.txt', 'outputs_ant_100/', 'outputs_tsp_100/', output_directory)
-    # merge_best_outputs(None, 'best_tsp_200.txt', None, 'outputs_tsp_200/', output_directory)
+    merge_best_outputs(None, 'best_tsp_200.txt', None, 'outputs_tsp_200/', output_directory)
 
 if __name__=="__main__":
     parser = argparse.ArgumentParser(description='Parsing arguments')
