@@ -31,13 +31,13 @@ def solve(input_file, num_of_locations, num_houses, list_of_locations, list_of_h
         if params[0] == "ANT":
             car_path, drop_off,  best_k, best_s, best_cost = r.Ant_Colony_solve()
             with open('best_ant_' + str(params[1]) + '.txt', 'a+') as f:
-                f.write('%s %s %s %s \n' % (best_k, best_s, best_cost, input_file))
+                f.write('%s %s %s %s\n' % (best_k, best_s, best_cost, input_file))
             return car_path, drop_off
         elif params[0] == "TSP":
             car_path, drop_off, best_k, best_s, best_cost = r.Two_Opt_solve()
             # Write best_k and best_s to a file
             with open('best_tsp_' + str(params[1]) + '.txt', 'a+') as f:
-                f.write('%s %s %s %s \n' % (best_k, best_s, best_cost, input_file))
+                f.write('%s %s %s %s\n' % (best_k, best_s, best_cost, input_file))
             return car_path, drop_off
 
 """
