@@ -110,8 +110,11 @@ class Reduction:
         soda_drop_flag = False
         useless_count = 0
         print(k_range)
+
         for k in k_range:
             for s in s_range:
+        # for k in range(1, 2):
+        #     for s in range(1, 2):
                 try:
                     if (useless_count < 35):
                         print("--------")
