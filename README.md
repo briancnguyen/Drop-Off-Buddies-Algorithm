@@ -1,7 +1,7 @@
 # Drop Off Buddies Algorithm
 
-## Problem Statement
-Brian, Akash, and their buddies are chilling at Brian's home late at night. Brian offers to drive and drop his buddies off closer to their homes so that they can get back home safe. Since the roads are long in his area, Brian would also like to get back home as soon as as he can. Can you plan transportation so that everyone can get home as efficiently as possible?
+## Installation Process
+- 'pip3 install -r requirements.txt'
 
 ## Run this Short Command to Generate Every Output
 ### Command Layout
