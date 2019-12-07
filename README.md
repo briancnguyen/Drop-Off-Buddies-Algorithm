@@ -1,7 +1,7 @@
 # Drop Off Buddies Algorithm
 
-## Installation Process
-- 'pip3 install -r requirements.txt'
+## Python Packages Installation Process
+- `pip3 install -r requirements.txt`
 
 ## Run this Short Command to Generate Every Output
 ### Command Layout
