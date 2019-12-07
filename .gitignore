@@ -119,4 +119,4 @@ dmypy.json
 *.cfg
 
 # MACOS
-.DS_STORE
+.DS_Store
